@@ -3,11 +3,97 @@
 'use strict';
 
 // ---------------------------------------------------------------------------
-// Clay – settings page (handles showConfiguration + webviewclosed events)
+// Clay – settings page
 // ---------------------------------------------------------------------------
 var Clay = require('@rebble/clay');
 var clayConfig = require('./config');
-var clay = new Clay(clayConfig);
+var clay = new Clay(clayConfig, null, { autoHandleEvents: false });
+var messageKeys = require('message_keys');
+
+// The watch reads these as C strings; every other setting must be an integer.
+var STRING_KEYS = ['KEY_TIMEZONESCODE', 'KEY_TIMEZONESBCODE'];
+
+// Settings only used on the phone – never sent to the watch.
+var PHONE_ONLY_KEYS = /^KEY_CRYPTO(FROM|TO|MARKET|MULTI)/;
+
+function readSettings() {
+    try {
+        return JSON.parse(localStorage.getItem('clay-settings')) || {};
+    } catch (e) {
+        return {};
+    }
+}
+
+function setting(key, fallback) {
+    var value = readSettings()[key];
+    return value === undefined || value === null ? fallback : value;
+}
+
+function defaultSettings(items, out) {
+    out = out || {};
+    items.forEach(function(item) {
+        if (item.items) {
+            defaultSettings(item.items, out);
+        } else if (item.messageKey && item.defaultValue !== undefined) {
+            out[item.messageKey] = item.defaultValue;
+        }
+    });
+    return out;
+}
+
+function toWatchValue(key, value) {
+    if (STRING_KEYS.indexOf(key) !== -1) {
+        return String(value || '');
+    }
+    if (typeof value === 'boolean') {
+        return value ? 1 : 0;
+    }
+    if (typeof value === 'string') {
+        var parsed = value.indexOf('0x') === 0 ? parseInt(value, 16) : parseInt(value, 10);
+        return isNaN(parsed) ? 0 : parsed;
+    }
+    return value;
+}
+
+function buildWatchDict(settings) {
+    var isAplite = Pebble.getActiveWatchInfo &&
+        Pebble.getActiveWatchInfo().platform === 'aplite';
+    var dict = {};
+    Object.keys(settings).forEach(function(key) {
+        if (messageKeys[key] === undefined || PHONE_ONLY_KEYS.test(key)) {
+            return;
+        }
+        if (isAplite && /WRIST|TAP|SLEEP|HEART|DEEP|ACTIVE|_CAL|STEPS|DIST|ALTHOURSBCOLOR|CRYPTO[BCD]COLOR/.test(key)) {
+            return;
+        }
+        dict[key] = toWatchValue(key, settings[key]);
+    });
+    return dict;
+}
+
+function sendSettings(settings) {
+    var dict = buildWatchDict(settings);
+    console.log('Sending settings: ' + JSON.stringify(dict));
+    Pebble.sendAppMessage(dict, function() {
+        console.log('Settings sent OK');
+        sendWeather();
+        getCryptocurrencies();
+    }, function(e) {
+        console.log('Settings send failed: ' + JSON.stringify(e));
+    });
+}
+
+Pebble.addEventListener('showConfiguration', function() {
+    Pebble.openURL(clay.generateUrl());
+});
+
+Pebble.addEventListener('webviewclosed', function(e) {
+    if (!e || !e.response) {
+        return;
+    }
+    clay.getSettings(e.response);
+    sendSettings(readSettings());
+});
 
 // ---------------------------------------------------------------------------
 // Weather icon mapping from Pebble plugin condition_code strings
@@ -28,7 +114,51 @@ var PLUGIN_ICON_MAP = {
 // ---------------------------------------------------------------------------
 // Weather via the Pebble app's built-in weather plugin
 // ---------------------------------------------------------------------------
-var latestWeatherData = null;
+var latestWeather = null;
+
+function numeric(prop) {
+    return prop && prop.numericValue ? prop.numericValue : null;
+}
+
+function toUserTemp(prop, fallback) {
+    var nv = numeric(prop);
+    if (!nv) {
+        return fallback;
+    }
+    var isFahrenheit = String(nv.unit || '').toLowerCase().indexOf('f') !== -1;
+    var useCelsius = !!toWatchValue('KEY_USECELSIUS', setting('KEY_USECELSIUS', false));
+    var value = nv.value;
+    if (useCelsius && isFahrenheit) {
+        value = (value - 32) * 5 / 9;
+    } else if (!useCelsius && !isFahrenheit) {
+        value = value * 9 / 5 + 32;
+    }
+    return Math.round(value);
+}
+
+function toUserSpeed(prop) {
+    var nv = numeric(prop);
+    if (!nv) {
+        return 0;
+    }
+    var unit = String(nv.unit || '').toLowerCase();
+    var ms = nv.value;
+    if (unit === 'km/h' || unit === 'kph') {
+        ms = nv.value / 3.6;
+    } else if (unit === 'mph') {
+        ms = nv.value / 2.237;
+    } else if (unit === 'knots' || unit === 'kn') {
+        ms = nv.value / 1.944;
+    }
+    var speedUnit = toWatchValue('KEY_SPEEDUNIT', setting('KEY_SPEEDUNIT', 0));
+    if (speedUnit === 1) {
+        return Math.round(ms * 3.6);
+    }
+    if (speedUnit === 2) {
+        return Math.round(ms * 1.944);
+    }
+    return Math.round(ms * 2.237);
+}
 
 function subscribeToWeather() {
     Pebble.subscribeToSource({
@@ -52,74 +182,7 @@ function subscribeToWeather() {
                 return;
             }
 
-            var p = here.properties;
-
-            // Temperature
-            var tempVal = p.temperature && p.temperature.numericValue
-                ? Math.round(p.temperature.numericValue.value) : 0;
-
-            // High / Low
-            var maxVal = p.high && p.high.numericValue
-                ? Math.round(p.high.numericValue.value) : tempVal;
-            var minVal = p.low && p.low.numericValue
-                ? Math.round(p.low.numericValue.value) : tempVal;
-
-            // Condition icon code
-            var condCode = p.condition_code && p.condition_code.shortText
-                ? p.condition_code.shortText.text : 'unknown';
-            var condId = PLUGIN_ICON_MAP[condCode] !== undefined
-                ? PLUGIN_ICON_MAP[condCode] : 0;
-
-            // Feels-like (wind chill / apparent temp)
-            var feelsVal = p.feels_like && p.feels_like.numericValue
-                ? Math.round(p.feels_like.numericValue.value) : tempVal;
-
-            // Wind speed – convert to the user's preferred unit (mph/kph/knots)
-            var speedUnit = parseInt(clay.getSettings()['SPEEDUNIT'] || 0, 10);
-            var windSpeed = 0;
-            if (p.wind_speed && p.wind_speed.numericValue) {
-                var ws = p.wind_speed.numericValue;
-                // plugin sends m/s; convert
-                var ms = ws.value;
-                if (ws.unit === 'km/h') {
-                    ms = ws.value / 3.6;
-                } else if (ws.unit === 'mph') {
-                    ms = ws.value / 2.237;
-                } else if (ws.unit === 'knots') {
-                    ms = ws.value / 1.944;
-                }
-                // m/s → target unit
-                if (speedUnit === 0) {       // mph
-                    windSpeed = Math.round(ms * 2.237);
-                } else if (speedUnit === 1) { // kph
-                    windSpeed = Math.round(ms * 3.6);
-                } else {                      // knots
-                    windSpeed = Math.round(ms * 1.944);
-                }
-            }
-
-            // Wind direction (degrees)
-            var windDir = p.wind_direction && p.wind_direction.numericValue
-                ? Math.round(p.wind_direction.numericValue.value) : 0;
-
-            // Sunrise / Sunset (unix timestamp seconds)
-            var sunriseTs = p.sunrise && p.sunrise.timestamp
-                ? Math.round(p.sunrise.timestamp.value) : 0;
-            var sunsetTs  = p.sunset  && p.sunset.timestamp
-                ? Math.round(p.sunset.timestamp.value)  : 0;
-
-            latestWeatherData = {
-                KEY_TEMP:      tempVal,
-                KEY_MAX:       maxVal,
-                KEY_MIN:       minVal,
-                KEY_WEATHER:   condId,
-                KEY_FEELS:     feelsVal,
-                KEY_SPEED:     windSpeed,
-                KEY_DIRECTION: windDir,
-                KEY_SUNRISE:   sunriseTs,
-                KEY_SUNSET:    sunsetTs
-            };
-
+            latestWeather = here.properties;
             sendWeather();
         },
         onError: function(err) {
@@ -132,12 +195,28 @@ function subscribeToWeather() {
 }
 
 function sendWeather() {
-    if (!latestWeatherData) {
+    if (!latestWeather) {
         return;
     }
-    console.log('Sending weather: ' + JSON.stringify(latestWeatherData));
+    var p = latestWeather;
+    var temp = toUserTemp(p.temperature, 0);
+    var condCode = p.condition_code && p.condition_code.shortText
+        ? p.condition_code.shortText.text : 'unknown';
+    var direction = numeric(p.wind_direction);
+    var data = {
+        KEY_TEMP:      temp,
+        KEY_MAX:       toUserTemp(p.high, temp),
+        KEY_MIN:       toUserTemp(p.low, temp),
+        KEY_WEATHER:   PLUGIN_ICON_MAP[condCode] !== undefined ? PLUGIN_ICON_MAP[condCode] : 0,
+        KEY_FEELS:     toUserTemp(p.feels_like, temp),
+        KEY_SPEED:     toUserSpeed(p.wind_speed),
+        KEY_DIRECTION: direction ? Math.round(direction.value) : 0,
+        KEY_SUNRISE:   p.sunrise && p.sunrise.timestamp ? Math.round(p.sunrise.timestamp.value) : 0,
+        KEY_SUNSET:    p.sunset && p.sunset.timestamp ? Math.round(p.sunset.timestamp.value) : 0
+    };
+    console.log('Sending weather: ' + JSON.stringify(data));
     Pebble.sendAppMessage(
-        latestWeatherData,
+        data,
         function() { console.log('Weather sent OK'); },
         function(e) { console.log('Weather send failed: ' + JSON.stringify(e)); }
     );
@@ -186,43 +265,21 @@ var sendError = function() {
 
 var getCryptocurrencies = function() {
     try {
-        var settings = clay.getSettings();
+        var settings = readSettings();
 
-        // Helper: read a Clay setting, fall back to empty
         function cs(key) {
             return settings[key] || '';
         }
 
-        var pairs = [
-            {
-                priceKey: 'KEY_CRYPTOPRICE',
-                from: cs('CRYPTOFROM'),
-                to:   cs('CRYPTOTO'),
-                market: cs('CRYPTOMARKET'),
-                multi: !!cs('CRYPTOMULTI')
-            },
-            {
-                priceKey: 'KEY_CRYPTOPRICEB',
-                from: cs('CRYPTOFROMB'),
-                to:   cs('CRYPTOTOB'),
-                market: cs('CRYPTOMARKETB'),
-                multi: !!cs('CRYPTOMULTIB')
-            },
-            {
-                priceKey: 'KEY_CRYPTOPRICEC',
-                from: cs('CRYPTOFROMC'),
-                to:   cs('CRYPTOTOC'),
-                market: cs('CRYPTOMARKETC'),
-                multi: !!cs('CRYPTOMULTIC')
-            },
-            {
-                priceKey: 'KEY_CRYPTOPRICED',
-                from: cs('CRYPTOFROMD'),
-                to:   cs('CRYPTOTOD'),
-                market: cs('CRYPTOMARKETD'),
-                multi: !!cs('CRYPTOMULTID')
-            }
-        ];
+        var pairs = ['', 'B', 'C', 'D'].map(function(suffix) {
+            return {
+                priceKey: 'KEY_CRYPTOPRICE' + suffix,
+                from:   cs('KEY_CRYPTOFROM' + suffix),
+                to:     cs('KEY_CRYPTOTO' + suffix),
+                market: cs('KEY_CRYPTOMARKET' + suffix),
+                multi:  !!cs('KEY_CRYPTOMULTI' + suffix)
+            };
+        });
 
         var pending = {};
         var results = {};
@@ -293,6 +350,11 @@ var getCryptocurrencies = function() {
 // ---------------------------------------------------------------------------
 Pebble.addEventListener('ready', function() {
     console.log('Timeboxed 2 PKJS ready');
+    if (!localStorage.getItem('clay-settings')) {
+        var defaults = defaultSettings(clayConfig);
+        clay.setSettings(defaults);
+        sendSettings(defaults);
+    }
     subscribeToWeather();
 });
 

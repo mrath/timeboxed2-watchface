@@ -6,10 +6,14 @@
 
 // Icon text-layer widths scaled for each platform.
 // Emery (200×228) uses ~1.4× the basalt values to accommodate larger fonts.
-#if defined(PBL_PLATFORM_EMERY) || defined(PBL_PLATFORM_FLINT)
+#if defined(PBL_PLATFORM_EMERY)
 #define ICON_W_WEATHER  55   /* weather condition icon  (was 40) */
 #define ICON_W_WIND     58   /* wind speed value        (was 42) */
 #define ICON_W_SMALL    47   /* sunrise/heart icons     (was 34) */
+#elif defined(PBL_PLATFORM_GABBRO)
+#define ICON_W_WEATHER  58
+#define ICON_W_WIND     60
+#define ICON_W_SMALL    49
 #else
 #define ICON_W_WEATHER  40
 #define ICON_W_WIND     42

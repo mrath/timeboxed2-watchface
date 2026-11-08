@@ -3,7 +3,7 @@
 
 // Widget module options (shared across all slot selects)
 var MODULES = [
-    { label: 'None',                value: -1 },
+    { label: 'None',                value: 0  },
     { label: 'Weather icon',        value: 1  },
     { label: 'Forecast hi/lo',      value: 2  },
     { label: 'Steps',               value: 3  },
@@ -55,7 +55,6 @@ module.exports = [
                 options: [
                     { label: 'Blocko',          value: 0 },
                     { label: 'Blocko Big',       value: 1 },
-                    { label: 'System',           value: 2 },
                     { label: 'Archivo Narrow',   value: 3 },
                     { label: 'OSP-DIN',          value: 4 },
                     { label: 'Prototype',        value: 5 },
@@ -76,21 +75,9 @@ module.exports = [
             },
             {
                 type: 'toggle',
-                messageKey: 'KEY_SIMPLEMODE',
-                label: 'Simple Mode (clock only)',
-                defaultValue: false
-            },
-            {
-                type: 'toggle',
-                messageKey: 'KEY_ENABLEADVANCED',
-                label: 'Show advanced info',
-                defaultValue: true
-            },
-            {
-                type: 'toggle',
                 messageKey: 'KEY_QUICKVIEW',
-                label: 'Avoid Quick View bar',
-                defaultValue: false
+                label: 'Enable Quick View mode',
+                defaultValue: true
             }
         ]
     },
@@ -125,19 +112,19 @@ module.exports = [
                 type: 'select',
                 messageKey: 'KEY_DATESEPARATOR',
                 label: 'Date Separator',
-                defaultValue: 0,
+                defaultValue: 1,
                 options: [
-                    { label: 'Slash (/)',  value: 0 },
-                    { label: 'Dot (.)',    value: 1 },
-                    { label: 'Dash (-)',   value: 2 },
-                    { label: 'Space ( )', value: 3 }
+                    { label: 'Space ( )', value: 0 },
+                    { label: 'Dot (.)',   value: 1 },
+                    { label: 'Slash (/)', value: 2 },
+                    { label: 'Dash (-)',  value: 3 }
                 ]
             },
             {
                 type: 'toggle',
                 messageKey: 'KEY_LEADINGZERO',
-                label: 'Leading zero on hour',
-                defaultValue: false
+                label: 'Hours with leading zero',
+                defaultValue: true
             },
             {
                 type: 'select',
@@ -256,15 +243,9 @@ module.exports = [
             },
             {
                 type: 'toggle',
-                messageKey: 'KEY_ENABLEWEATHER',
-                label: 'Enable weather widgets',
-                defaultValue: true
-            },
-            {
-                type: 'toggle',
                 messageKey: 'KEY_USECELSIUS',
-                label: 'Use Celsius',
-                defaultValue: true
+                label: 'Show temperature in Celsius',
+                defaultValue: false
             },
             {
                 type: 'select',
@@ -301,9 +282,9 @@ module.exports = [
             slotSelect('Slot A (top-left)',   'KEY_SLOTA', 1),
             slotSelect('Slot B (top-right)',  'KEY_SLOTB', 2),
             slotSelect('Slot C (bot-left)',   'KEY_SLOTC', 3),
-            slotSelect('Slot D (bot-right)',  'KEY_SLOTD', 14),
+            slotSelect('Slot D (bot-right)',  'KEY_SLOTD', 4),
             slotSelect('Slot E (above clock)', 'KEY_SLOTE', 18),
-            slotSelect('Slot F (below clock)', 'KEY_SLOTF', 19)
+            slotSelect('Slot F (below clock)', 'KEY_SLOTF', 17)
         ]
     },
     // -----------------------------------------------------------------------
@@ -313,12 +294,12 @@ module.exports = [
         type: 'section',
         items: [
             { type: 'heading', defaultValue: 'Widget Slots (Sleep Mode)' },
-            slotSelect('Sleep Slot A', 'KEY_SLEEPSLOTA', 6),
-            slotSelect('Sleep Slot B', 'KEY_SLEEPSLOTB', 7),
-            slotSelect('Sleep Slot C', 'KEY_SLEEPSLOTC', -1),
-            slotSelect('Sleep Slot D', 'KEY_SLEEPSLOTD', -1),
-            slotSelect('Sleep Slot E', 'KEY_SLEEPSLOTE', -1),
-            slotSelect('Sleep Slot F', 'KEY_SLEEPSLOTF', -1)
+            slotSelect('Sleep Slot A', 'KEY_SLEEPSLOTA', 1),
+            slotSelect('Sleep Slot B', 'KEY_SLEEPSLOTB', 2),
+            slotSelect('Sleep Slot C', 'KEY_SLEEPSLOTC', 6),
+            slotSelect('Sleep Slot D', 'KEY_SLEEPSLOTD', 7),
+            slotSelect('Sleep Slot E', 'KEY_SLEEPSLOTE', 18),
+            slotSelect('Sleep Slot F', 'KEY_SLEEPSLOTF', 17)
         ]
     },
     // -----------------------------------------------------------------------
@@ -328,12 +309,12 @@ module.exports = [
         type: 'section',
         items: [
             { type: 'heading', defaultValue: 'Widget Slots (Tap Mode)' },
-            slotSelect('Tap Slot A', 'KEY_TAPSLOTA', -1),
-            slotSelect('Tap Slot B', 'KEY_TAPSLOTB', -1),
-            slotSelect('Tap Slot C', 'KEY_TAPSLOTC', -1),
-            slotSelect('Tap Slot D', 'KEY_TAPSLOTD', -1),
-            slotSelect('Tap Slot E', 'KEY_TAPSLOTE', -1),
-            slotSelect('Tap Slot F', 'KEY_TAPSLOTF', -1)
+            slotSelect('Tap Slot A', 'KEY_TAPSLOTA', 15),
+            slotSelect('Tap Slot B', 'KEY_TAPSLOTB', 14),
+            slotSelect('Tap Slot C', 'KEY_TAPSLOTC', 5),
+            slotSelect('Tap Slot D', 'KEY_TAPSLOTD', 13),
+            slotSelect('Tap Slot E', 'KEY_TAPSLOTE', 18),
+            slotSelect('Tap Slot F', 'KEY_TAPSLOTF', 17)
         ]
     },
     // -----------------------------------------------------------------------
@@ -343,12 +324,12 @@ module.exports = [
         type: 'section',
         items: [
             { type: 'heading', defaultValue: 'Widget Slots (Wrist-Raise Mode)' },
-            slotSelect('Wrist Slot A', 'KEY_WRISTSLOTA', -1),
-            slotSelect('Wrist Slot B', 'KEY_WRISTSLOTB', -1),
-            slotSelect('Wrist Slot C', 'KEY_WRISTSLOTC', -1),
-            slotSelect('Wrist Slot D', 'KEY_WRISTSLOTD', -1),
-            slotSelect('Wrist Slot E', 'KEY_WRISTSLOTE', -1),
-            slotSelect('Wrist Slot F', 'KEY_WRISTSLOTF', -1)
+            slotSelect('Wrist Slot A', 'KEY_WRISTSLOTA', 11),
+            slotSelect('Wrist Slot B', 'KEY_WRISTSLOTB', 12),
+            slotSelect('Wrist Slot C', 'KEY_WRISTSLOTC', 8),
+            slotSelect('Wrist Slot D', 'KEY_WRISTSLOTD', 16),
+            slotSelect('Wrist Slot E', 'KEY_WRISTSLOTE', 18),
+            slotSelect('Wrist Slot F', 'KEY_WRISTSLOTF', 17)
         ]
     },
     // -----------------------------------------------------------------------
@@ -367,8 +348,8 @@ module.exports = [
             {
                 type: 'toggle',
                 messageKey: 'KEY_UPDATE',
-                label: 'Show update notification',
-                defaultValue: false
+                label: 'Check for updates',
+                defaultValue: true
             },
             {
                 type: 'toggle',
@@ -387,15 +368,9 @@ module.exports = [
             { type: 'heading', defaultValue: 'Health' },
             {
                 type: 'toggle',
-                messageKey: 'KEY_ENABLEHEALTH',
-                label: 'Enable health tracking',
-                defaultValue: true
-            },
-            {
-                type: 'toggle',
                 messageKey: 'KEY_SHOWSLEEP',
-                label: 'Show sleep data',
-                defaultValue: true
+                label: 'Enable after wake up mode',
+                defaultValue: false
             },
             {
                 type: 'toggle',
@@ -413,14 +388,14 @@ module.exports = [
                 type: 'input',
                 messageKey: 'KEY_HEARTLOW',
                 label: 'Heart rate low threshold',
-                defaultValue: '60',
+                defaultValue: '0',
                 attributes: { type: 'number', min: 0, max: 300 }
             },
             {
                 type: 'input',
                 messageKey: 'KEY_HEARTHIGH',
                 label: 'Heart rate high threshold',
-                defaultValue: '100',
+                defaultValue: '0',
                 attributes: { type: 'number', min: 0, max: 300 }
             }
         ]
@@ -446,15 +421,14 @@ module.exports = [
                 options: [
                     { label: '5 s',  value: 5  },
                     { label: '7 s',  value: 7  },
-                    { label: '10 s', value: 10 },
-                    { label: '15 s', value: 15 }
+                    { label: '10 s', value: 10 }
                 ]
             },
             {
                 type: 'toggle',
                 messageKey: 'KEY_SHOWWRIST',
-                label: 'Enable wrist-raise mode',
-                defaultValue: true
+                label: 'Enable wrist shake mode',
+                defaultValue: false
             }
         ]
     },
@@ -465,6 +439,13 @@ module.exports = [
         type: 'section',
         items: [
             { type: 'heading', defaultValue: 'Colors' },
+            {
+                type: 'toggle',
+                messageKey: 'KEY_ENABLEADVANCED',
+                label: 'Advanced colors',
+                description: 'When off, every element uses the Hours color.',
+                defaultValue: false
+            },
             { type: 'color', messageKey: 'KEY_BGCOLOR',           label: 'Background',         defaultValue: '0x000000' },
             { type: 'color', messageKey: 'KEY_HOURSCOLOR',        label: 'Hours',               defaultValue: '0xFFFFFF' },
             { type: 'color', messageKey: 'KEY_ALTHOURSCOLOR',     label: 'Alt Hours (Tz A)',     defaultValue: '0xAAAAAA' },
