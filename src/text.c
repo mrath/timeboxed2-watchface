@@ -4,6 +4,18 @@
 #include "configs.h"
 #include "positions.h"
 
+// Icon text-layer widths scaled for each platform.
+// Emery (200×228) uses ~1.4× the basalt values to accommodate larger fonts.
+#if defined(PBL_PLATFORM_EMERY) || defined(PBL_PLATFORM_FLINT)
+#define ICON_W_WEATHER  55   /* weather condition icon  (was 40) */
+#define ICON_W_WIND     58   /* wind speed value        (was 42) */
+#define ICON_W_SMALL    47   /* sunrise/heart icons     (was 34) */
+#else
+#define ICON_W_WEATHER  40
+#define ICON_W_WIND     42
+#define ICON_W_SMALL    34
+#endif
+
 static TextLayer *hours;
 static TextLayer *date;
 static TextLayer *alt_time;
@@ -259,7 +271,7 @@ void create_text_layers(Window* window) {
     slot = get_slot_for_module(MODULE_WEATHER);
     if (slot != -1) {
         pos = get_pos_for_item(slot, WEATHER_ITEM, mode, selected_font, width, height);
-        weather = text_layer_create(GRect(pos.x, pos.y, PBL_IF_ROUND_ELSE(width, 40), 50));
+        weather = text_layer_create(GRect(pos.x, pos.y, PBL_IF_ROUND_ELSE(width, ICON_W_WEATHER), 50));
         text_layer_set_background_color(weather, GColorClear);
         text_layer_set_text_alignment(weather, GTextAlignmentCenter);
 
@@ -295,7 +307,7 @@ void create_text_layers(Window* window) {
     slot = get_slot_for_module(MODULE_WIND);
     if (slot != -1) {
         pos = get_pos_for_item(slot, SPEED_ITEM, mode, selected_font, width, height);
-        speed = text_layer_create(GRect(pos.x, pos.y, 42, 50));
+        speed = text_layer_create(GRect(pos.x, pos.y, ICON_W_WIND, 50));
         text_layer_set_background_color(speed, GColorClear);
         text_layer_set_text_alignment(speed, GTextAlignmentRight);
 
@@ -318,7 +330,7 @@ void create_text_layers(Window* window) {
         text_layer_set_text_alignment(sunrise, GTextAlignmentLeft);
 
         pos = get_pos_for_item(slot, SUNRISEICON_ITEM, mode, selected_font, width, height);
-        sunrise_icon = text_layer_create(GRect(pos.x, pos.y, PBL_IF_ROUND_ELSE(width, 34), 50));
+        sunrise_icon = text_layer_create(GRect(pos.x, pos.y, PBL_IF_ROUND_ELSE(width, ICON_W_SMALL), 50));
         text_layer_set_background_color(sunrise_icon, GColorClear);
         text_layer_set_text_alignment(sunrise_icon, GTextAlignmentLeft);
     }
@@ -460,7 +472,7 @@ void create_text_layers(Window* window) {
         text_layer_set_text_alignment(heart, GTextAlignmentLeft);
 
         pos = get_pos_for_item(slot, HEARTICON_ITEM, mode, selected_font, width, height);
-        heart_icon = text_layer_create(GRect(pos.x, pos.y, PBL_IF_ROUND_ELSE(width, 34), 50));
+        heart_icon = text_layer_create(GRect(pos.x, pos.y, PBL_IF_ROUND_ELSE(width, ICON_W_SMALL), 50));
         text_layer_set_background_color(heart_icon, GColorClear);
         text_layer_set_text_alignment(heart_icon, GTextAlignmentLeft);
     }

@@ -1,18 +1,20 @@
 {
-  "version": "5.9.0",
+  "version": "6.0.0",
   "author": "Luis Bento",
   "private": true,
-  "dependencies": {},
+  "dependencies": {
+    "@rebble/clay": "^1.1.0"
+  },
   "keywords": [
     "pebble-app"
   ],
   "pebble": {
     "sdkVersion": "3",
+    "manifestVersion": 2,
     "resources": {
       "media": [
         {
           "type": "font",
-          "characterRegex": "[]",
           "compatibility": "2.7",
           "file": "fonts/weathericons-regular-webfont.ttf",
           "name": "FONT_WEATHER_24",
@@ -20,12 +22,22 @@
             "aplite",
             "basalt",
             "chalk",
-            "diorite"
+            "diorite",
+            "flint"
           ]
         },
         {
           "type": "font",
-          "characterRegex": "[]",
+          "compatibility": "2.7",
+          "file": "fonts/weathericons-regular-webfont.ttf",
+          "name": "FONT_WEATHER_24",
+          "pixelHeight": 33,
+          "targetPlatforms": [
+            "emery"
+          ]
+        },
+        {
+          "type": "font",
           "compatibility": "2.7",
           "file": "fonts/weathericons-regular-webfont.ttf",
           "name": "FONT_WEATHER_16",
@@ -33,7 +45,18 @@
             "aplite",
             "basalt",
             "chalk",
-            "diorite"
+            "diorite",
+            "flint"
+          ]
+        },
+        {
+          "type": "font",
+          "compatibility": "2.7",
+          "file": "fonts/weathericons-regular-webfont.ttf",
+          "name": "FONT_WEATHER_16",
+          "pixelHeight": 22,
+          "targetPlatforms": [
+            "emery"
           ]
         },
         {
@@ -46,7 +69,19 @@
             "aplite",
             "basalt",
             "chalk",
-            "diorite"
+            "diorite",
+            "flint"
+          ]
+        },
+        {
+          "type": "font",
+          "characterRegex": "[a-zA-Z0-7*()#$%]",
+          "compatibility": "2.7",
+          "file": "fonts/custom-icons.ttf",
+          "name": "FONT_ICONS_20",
+          "pixelHeight": 28,
+          "targetPlatforms": [
+            "emery"
           ]
         },
         {
@@ -59,7 +94,19 @@
             "aplite",
             "basalt",
             "chalk",
-            "diorite"
+            "diorite",
+            "flint"
+          ]
+        },
+        {
+          "type": "font",
+          "characterRegex": "[0-9:a-zA-Z.+%!()/= -]",
+          "compatibility": "2.7",
+          "file": "fonts/Blocko.ttf",
+          "name": "FONT_BLOCKO_19",
+          "pixelHeight": 27,
+          "targetPlatforms": [
+            "emery"
           ]
         },
         {
@@ -72,7 +119,19 @@
             "aplite",
             "basalt",
             "chalk",
-            "diorite"
+            "diorite",
+            "flint"
+          ]
+        },
+        {
+          "type": "font",
+          "characterRegex": "[0-9:a-zA-Z.+%!()/= -]",
+          "compatibility": "2.7",
+          "file": "fonts/Blocko.ttf",
+          "name": "FONT_BLOCKO_32",
+          "pixelHeight": 45,
+          "targetPlatforms": [
+            "emery"
           ]
         },
         {
@@ -85,7 +144,19 @@
             "aplite",
             "basalt",
             "chalk",
-            "diorite"
+            "diorite",
+            "flint"
+          ]
+        },
+        {
+          "type": "font",
+          "characterRegex": "[0-9: ]",
+          "compatibility": "2.7",
+          "file": "fonts/Blocko.ttf",
+          "name": "FONT_BLOCKO_64",
+          "pixelHeight": 90,
+          "targetPlatforms": [
+            "emery"
           ]
         },
         {
@@ -98,7 +169,19 @@
             "aplite",
             "basalt",
             "chalk",
-            "diorite"
+            "diorite",
+            "flint"
+          ]
+        },
+        {
+          "type": "font",
+          "characterRegex": "[0-9:a-zA-Z.+%!()/= -]",
+          "compatibility": "2.7",
+          "file": "fonts/Blocko.ttf",
+          "name": "FONT_BLOCKO_16",
+          "pixelHeight": 22,
+          "targetPlatforms": [
+            "emery"
           ]
         },
         {
@@ -111,7 +194,19 @@
             "aplite",
             "basalt",
             "chalk",
-            "diorite"
+            "diorite",
+            "flint"
+          ]
+        },
+        {
+          "type": "font",
+          "characterRegex": "[0-9:a-zA-Z.+%!()/= -]",
+          "compatibility": "2.7",
+          "file": "fonts/Blocko.ttf",
+          "name": "FONT_BLOCKO_24",
+          "pixelHeight": 34,
+          "targetPlatforms": [
+            "emery"
           ]
         },
         {
@@ -124,7 +219,19 @@
             "aplite",
             "basalt",
             "chalk",
-            "diorite"
+            "diorite",
+            "flint"
+          ]
+        },
+        {
+          "type": "font",
+          "characterRegex": "[0-9:]",
+          "compatibility": "2.7",
+          "file": "fonts/Blocko.ttf",
+          "name": "FONT_BLOCKO_56",
+          "pixelHeight": 78,
+          "targetPlatforms": [
+            "emery"
           ]
         },
         {
@@ -137,7 +244,19 @@
             "aplite",
             "basalt",
             "chalk",
-            "diorite"
+            "diorite",
+            "flint"
+          ]
+        },
+        {
+          "type": "font",
+          "characterRegex": "[0-9:a-zA-Z.+%!()/= -]",
+          "compatibility": "2.7",
+          "file": "fonts/leco-regular.ttf",
+          "name": "FONT_LECO_14",
+          "pixelHeight": 20,
+          "targetPlatforms": [
+            "emery"
           ]
         },
         {
@@ -150,7 +269,19 @@
             "aplite",
             "basalt",
             "chalk",
-            "diorite"
+            "diorite",
+            "flint"
+          ]
+        },
+        {
+          "type": "font",
+          "characterRegex": "[0-9:a-zA-Z.+%!()/= -]",
+          "compatibility": "2.7",
+          "file": "fonts/leco-regular.ttf",
+          "name": "FONT_LECO_21",
+          "pixelHeight": 29,
+          "targetPlatforms": [
+            "emery"
           ]
         },
         {
@@ -163,7 +294,19 @@
             "aplite",
             "basalt",
             "chalk",
-            "diorite"
+            "diorite",
+            "flint"
+          ]
+        },
+        {
+          "type": "font",
+          "characterRegex": "[0-9:]",
+          "compatibility": "2.7",
+          "file": "fonts/leco-regular.ttf",
+          "name": "FONT_LECO_47",
+          "pixelHeight": 66,
+          "targetPlatforms": [
+            "emery"
           ]
         },
         {
@@ -176,7 +319,19 @@
             "aplite",
             "basalt",
             "chalk",
-            "diorite"
+            "diorite",
+            "flint"
+          ]
+        },
+        {
+          "type": "font",
+          "characterRegex": "[0-9:a-zA-Z.+%!()/= -]",
+          "compatibility": "2.7",
+          "file": "fonts/konstruct.ttf",
+          "name": "FONT_KONSTRUCT_11",
+          "pixelHeight": 15,
+          "targetPlatforms": [
+            "emery"
           ]
         },
         {
@@ -189,7 +344,19 @@
             "aplite",
             "basalt",
             "chalk",
-            "diorite"
+            "diorite",
+            "flint"
+          ]
+        },
+        {
+          "type": "font",
+          "characterRegex": "[0-9:a-zA-Z.+%!()/= -]",
+          "compatibility": "2.7",
+          "file": "fonts/konstruct.ttf",
+          "name": "FONT_KONSTRUCT_17",
+          "pixelHeight": 24,
+          "targetPlatforms": [
+            "emery"
           ]
         },
         {
@@ -202,7 +369,19 @@
             "aplite",
             "basalt",
             "chalk",
-            "diorite"
+            "diorite",
+            "flint"
+          ]
+        },
+        {
+          "type": "font",
+          "characterRegex": "[0-9:]",
+          "compatibility": "2.7",
+          "file": "fonts/konstruct.ttf",
+          "name": "FONT_KONSTRUCT_33",
+          "pixelHeight": 46,
+          "targetPlatforms": [
+            "emery"
           ]
         },
         {
@@ -215,7 +394,19 @@
             "aplite",
             "basalt",
             "chalk",
-            "diorite"
+            "diorite",
+            "flint"
+          ]
+        },
+        {
+          "type": "font",
+          "characterRegex": "[0-9:a-zA-Z.+%!()/= -]",
+          "compatibility": "2.7",
+          "file": "fonts/ArchivoNarrow-Bold.ttf",
+          "name": "FONT_ARCHIVO_18",
+          "pixelHeight": 25,
+          "targetPlatforms": [
+            "emery"
           ]
         },
         {
@@ -228,7 +419,19 @@
             "aplite",
             "basalt",
             "chalk",
-            "diorite"
+            "diorite",
+            "flint"
+          ]
+        },
+        {
+          "type": "font",
+          "characterRegex": "[0-9:a-zA-Z.+%!()/= -]",
+          "compatibility": "2.7",
+          "file": "fonts/ArchivoNarrow-Bold.ttf",
+          "name": "FONT_ARCHIVO_28",
+          "pixelHeight": 39,
+          "targetPlatforms": [
+            "emery"
           ]
         },
         {
@@ -241,7 +444,19 @@
             "aplite",
             "basalt",
             "chalk",
-            "diorite"
+            "diorite",
+            "flint"
+          ]
+        },
+        {
+          "type": "font",
+          "characterRegex": "[0-9:]",
+          "compatibility": "2.7",
+          "file": "fonts/ArchivoNarrow-Bold.ttf",
+          "name": "FONT_ARCHIVO_56",
+          "pixelHeight": 78,
+          "targetPlatforms": [
+            "emery"
           ]
         },
         {
@@ -254,7 +469,19 @@
             "aplite",
             "basalt",
             "chalk",
-            "diorite"
+            "diorite",
+            "flint"
+          ]
+        },
+        {
+          "type": "font",
+          "characterRegex": "[0-9:a-zA-Z.+%!()/= -]",
+          "compatibility": "2.7",
+          "file": "fonts/OSP-DIN.ttf",
+          "name": "FONT_DIN_20",
+          "pixelHeight": 28,
+          "targetPlatforms": [
+            "emery"
           ]
         },
         {
@@ -267,7 +494,19 @@
             "aplite",
             "basalt",
             "chalk",
-            "diorite"
+            "diorite",
+            "flint"
+          ]
+        },
+        {
+          "type": "font",
+          "characterRegex": "[0-9:a-zA-Z.+%!()/= -]",
+          "compatibility": "2.7",
+          "file": "fonts/OSP-DIN.ttf",
+          "name": "FONT_DIN_26",
+          "pixelHeight": 36,
+          "targetPlatforms": [
+            "emery"
           ]
         },
         {
@@ -280,7 +519,19 @@
             "aplite",
             "basalt",
             "chalk",
-            "diorite"
+            "diorite",
+            "flint"
+          ]
+        },
+        {
+          "type": "font",
+          "characterRegex": "[0-9:]",
+          "compatibility": "2.7",
+          "file": "fonts/OSP-DIN.ttf",
+          "name": "FONT_DIN_58",
+          "pixelHeight": 81,
+          "targetPlatforms": [
+            "emery"
           ]
         },
         {
@@ -293,7 +544,19 @@
             "aplite",
             "basalt",
             "chalk",
-            "diorite"
+            "diorite",
+            "flint"
+          ]
+        },
+        {
+          "type": "font",
+          "characterRegex": "[0-9:a-zA-Z.+%!()/= -]",
+          "compatibility": "2.7",
+          "file": "fonts/Prototype.ttf",
+          "name": "FONT_PROTOTYPE_16",
+          "pixelHeight": 22,
+          "targetPlatforms": [
+            "emery"
           ]
         },
         {
@@ -306,7 +569,19 @@
             "aplite",
             "basalt",
             "chalk",
-            "diorite"
+            "diorite",
+            "flint"
+          ]
+        },
+        {
+          "type": "font",
+          "characterRegex": "[0-9:a-zA-Z.+%!()/= -]",
+          "compatibility": "2.7",
+          "file": "fonts/Prototype.ttf",
+          "name": "FONT_PROTOTYPE_22",
+          "pixelHeight": 31,
+          "targetPlatforms": [
+            "emery"
           ]
         },
         {
@@ -319,75 +594,79 @@
             "aplite",
             "basalt",
             "chalk",
-            "diorite"
+            "diorite",
+            "flint"
+          ]
+        },
+        {
+          "type": "font",
+          "characterRegex": "[0-9:]",
+          "compatibility": "2.7",
+          "file": "fonts/Prototype.ttf",
+          "name": "FONT_PROTOTYPE_48",
+          "pixelHeight": 67,
+          "targetPlatforms": [
+            "emery"
           ]
         }
       ]
     },
     "projectType": "native",
-    "uuid": "1354d7dc-b9e5-420d-9edf-533ee2fd4520",
+    "uuid": "2e8d1f5a-7b3c-4906-a8e2-1d47c35b96f0",
     "messageKeys": {
-      "KEY_UPDATE": 33,
-      "KEY_ENABLEWEATHER": 7,
-      "KEY_DATEFORMAT": 37,
-      "KEY_USECAL": 47,
-      "KEY_LEADINGZERO": 46,
-      "KEY_ENABLEADVANCED": 13,
-      "KEY_WEATHERKEY": 8,
-      "KEY_MINCOLOR": 20,
-      "KEY_MIN": 2,
-      "KEY_BLUETOOTHCOLOR": 30,
-      "KEY_TEXTALIGN": 38,
-      "KEY_OVERRIDELOCATION": 31,
-      "KEY_ERROR": 32,
-      "KEY_USEKM": 5,
-      "KEY_BGCOLOR": 11,
-      "KEY_STEPSBEHINDCOLOR": 39,
-      "KEY_SPEED": 59,
-      "KEY_DISTBEHINDCOLOR": 40,
-      "KEY_WEATHERPROVIDER": 43,
-      "KEY_STEPSCOLOR": 22,
-      "KEY_MAX": 1,
-      "KEY_SLEEPSLOTA": 53,
-      "KEY_SLEEPSLOTC": 55,
-      "KEY_SLEEPSLOTB": 54,
-      "KEY_DATECOLOR": 14,
-      "KEY_SLEEPSLOTD": 56,
-      "KEY_MAXCOLOR": 21,
-      "KEY_SLEEP": 41,
-      "KEY_SHOWSLEEP": 6,
-      "KEY_FEELS": 58,
-      "KEY_SIMPLEMODE": 48,
-      "KEY_DEEP": 42,
-      "KEY_ENABLEHEALTH": 4,
-      "KEY_LOCALE": 36,
-      "KEY_TIMEZONESCODE": 24,
-      "KEY_WEATHERCOLOR": 18,
-      "KEY_DIST": 28,
-      "KEY_FONTTYPE": 26,
-      "KEY_HASUPDATE": 35,
-      "KEY_CAL": 57,
-      "KEY_HOURSCOLOR": 12,
-      "KEY_ALTHOURSCOLOR": 15,
-      "KEY_STEPS": 27,
-      "KEY_BLUETOOTHDISCONNECT": 29,
-      "KEY_USECELSIUS": 9,
-      "KEY_DISTCOLOR": 23,
-      "KEY_SLOTD": 52,
-      "KEY_UPDATECOLOR": 34,
-      "KEY_SLOTA": 49,
-      "KEY_SLOTC": 51,
-      "KEY_DIRECTION": 60,
-      "KEY_BATTERYLOWCOLOR": 17,
       "KEY_TEMP": 0,
-      "KEY_SLOTB": 50,
-      "KEY_TIMEZONES": 10,
-      "KEY_TIMEZONESMINUTES": 25,
-      "KEY_BATTERYCOLOR": 16,
-      "KEY_CONFIGS": 45,
-      "KEY_YAHOOKEY": 44,
-      "KEY_TEMPCOLOR": 19,
+      "KEY_MAX": 1,
+      "KEY_MIN": 2,
       "KEY_WEATHER": 3,
+      "KEY_ENABLEHEALTH": 4,
+      "KEY_USEKM": 5,
+      "KEY_SHOWSLEEP": 6,
+      "KEY_ENABLEWEATHER": 7,
+      "KEY_USECELSIUS": 9,
+      "KEY_TIMEZONES": 10,
+      "KEY_BGCOLOR": 11,
+      "KEY_HOURSCOLOR": 12,
+      "KEY_ENABLEADVANCED": 13,
+      "KEY_DATECOLOR": 14,
+      "KEY_ALTHOURSCOLOR": 15,
+      "KEY_BATTERYCOLOR": 16,
+      "KEY_BATTERYLOWCOLOR": 17,
+      "KEY_WEATHERCOLOR": 18,
+      "KEY_TEMPCOLOR": 19,
+      "KEY_MINCOLOR": 20,
+      "KEY_MAXCOLOR": 21,
+      "KEY_STEPSCOLOR": 22,
+      "KEY_DISTCOLOR": 23,
+      "KEY_TIMEZONESCODE": 24,
+      "KEY_TIMEZONESMINUTES": 25,
+      "KEY_FONTTYPE": 26,
+      "KEY_STEPS": 27,
+      "KEY_DIST": 28,
+      "KEY_BLUETOOTHDISCONNECT": 29,
+      "KEY_BLUETOOTHCOLOR": 30,
+      "KEY_ERROR": 32,
+      "KEY_DATEFORMAT": 37,
+      "KEY_TEXTALIGN": 38,
+      "KEY_STEPSBEHINDCOLOR": 39,
+      "KEY_DISTBEHINDCOLOR": 40,
+      "KEY_SLEEP": 41,
+      "KEY_DEEP": 42,
+      "KEY_CONFIGS": 45,
+      "KEY_LEADINGZERO": 46,
+      "KEY_USECAL": 47,
+      "KEY_SIMPLEMODE": 48,
+      "KEY_SLOTA": 49,
+      "KEY_SLOTB": 50,
+      "KEY_SLOTC": 51,
+      "KEY_SLOTD": 52,
+      "KEY_SLEEPSLOTA": 53,
+      "KEY_SLEEPSLOTB": 54,
+      "KEY_SLEEPSLOTC": 55,
+      "KEY_SLEEPSLOTD": 56,
+      "KEY_CAL": 57,
+      "KEY_FEELS": 58,
+      "KEY_SPEED": 59,
+      "KEY_DIRECTION": 60,
       "KEY_WINDDIRCOLOR": 61,
       "KEY_WINDSPEEDCOLOR": 62,
       "KEY_CALCOLOR": 63,
@@ -456,10 +735,21 @@
       "KEY_CRYPTOPRICED": 126,
       "KEY_CRYPTOMARKETC": 127,
       "KEY_CRYPTOMARKETD": 128,
-      "KEY_CRYPTOTIME": 129
+      "KEY_CRYPTOTIME": 129,
+      "KEY_CRYPTOFROMC": 131,
+      "KEY_CRYPTOTOC": 132,
+      "KEY_CRYPTOFROMD": 133,
+      "KEY_CRYPTOTOD": 134,
+      "KEY_CRYPTOMULTI": 135,
+      "KEY_CRYPTOMULTIB": 136,
+      "KEY_CRYPTOMULTIC": 137,
+      "KEY_CRYPTOMULTID": 138,
+      "KEY_LOCALE": 36,
+      "KEY_UPDATE": 33,
+      "KEY_UPDATECOLOR": 34
     },
     "enableMultiJS": true,
-    "displayName": "Timeboxed",
+    "displayName": "Timeboxed 2",
     "watchapp": {
       "onlyShownOnCommunication": false,
       "hiddenApp": false,
@@ -469,79 +759,33 @@
       "aplite",
       "basalt",
       "chalk",
-      "diorite"
+      "diorite",
+      "flint",
+      "emery"
     ],
     "capabilities": [
-      "location",
       "configurable",
       "health"
-    ]
+    ],
+    "usesPermissions": [
+      "Location",
+      {
+        "name": "Internet",
+        "parameters": {
+          "domains": [
+            "min-api.cryptocompare.com"
+          ]
+        }
+      }
+    ],
+    "dependencies": {
+      "@rebble/clay": "^1.1.0"
+    }
   },
-  "name": "Timeboxed",
-  "devDependencies": {
-    "autoprefixer": "^6.3.6",
-    "babel-core": "^6.26.0",
-    "babel-eslint": "^7.2.3",
-    "babel-loader": "^6.4.0",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-preset-es2015": "^6.6.0",
-    "babel-preset-react": "^6.5.0",
-    "babel-preset-stage-2": "^6.24.1",
-    "bootstrap": "4.0.0-alpha.4",
-    "bootstrap-loader": "^1.0.10",
-    "bootstrap-toggle": "^2.2.2",
-    "classnames": "^2.2.3",
-    "compression-webpack-plugin": "^0.3.1",
-    "css-loader": "^0.23.1",
-    "es6-promise": "^3.2.1",
-    "eslint": "^4.1.1",
-    "eslint-plugin-babel": "^4.1.2",
-    "eslint-plugin-no-loops": "^0.3.0",
-    "eslint-plugin-prefer-object-spread": "^1.2.1",
-    "eslint-plugin-promise": "^3.5.0",
-    "eslint-plugin-react": "^7.4.0",
-    "eslint-plugin-sort-imports-es6-autofix": "^0.1.1",
-    "express": "^4.14.0",
-    "extract-text-webpack-plugin": "^1.0.1",
-    "file-loader": "^0.8.5",
-    "html-loader": "^0.4.3",
-    "html-webpack-plugin": "^2.15.0",
-    "imports-loader": "^0.6.5",
-    "isomorphic-fetch": "^2.2.1",
-    "jquery-slim": "^3.0.0",
-    "js-base64": "^2.3.2",
-    "node-sass": "^3.4.2",
-    "object-assign": "^4.1.1",
-    "postcss-loader": "^0.9.1",
-    "preact": "^8.2.5",
-    "preact-compat": "^3.17.0",
-    "prettier": "^1.7.0",
-    "prettier-eslint": "^8.1.1",
-    "prettier-eslint-cli": "^4.3.2",
-    "react-dropdown": "^1.3.2",
-    "react-fastclick": "^2.1.2",
-    "react-fastclick-alt": "^1.0.1",
-    "react-input-toggle": "^0.3.0",
-    "react-toggle": "^4.0.2",
-    "resolve-url-loader": "^1.4.3",
-    "sass-loader": "^3.2.0",
-    "strip-comments": "^0.4.4",
-    "style-loader": "^0.13.1",
-    "url-loader": "^0.5.7",
-    "webpack": "^1.13.1",
-    "webpack-dev-server": "^1.14.1",
-    "webpack-merge": "^0.10.0"
-  },
+  "name": "timeboxed-2",
   "scripts": {
-    "build": "webpack --config ./configs/webpack-config.js --bail --colors --progress",
-    "build:watch": "webpack --config ./configs/webpack-config.js --watch --colors --progress",
-    "clean": "rm -rf configs/dist/ && rm -rf node_modules/ && rm -rf configs/deploy/ && mkdir configs/deploy",
-    "deploy": "mkdir -p configs/deploy/dist/ && cp -R configs/server/* configs/deploy/ && cp -R configs/dist/* configs/deploy/dist/",
-    "build:deploy": "npm run build:configs && mkdir -p configs/deploy/dist/ && cp -R configs/server/* configs/deploy/ && cp -R configs/server-common/* configs/deploy/ && cp -R configs/dist/* configs/deploy/dist/",
-    "build:deploy:start": "npm run build:deploy && (cd configs/deploy && npm install && node server.js)",
-    "build:configs": "webpack --config ./configs/webpack-config.js --bail --colors --progress && (cd configs/standalone-config && node ./generate-config.js) && mv configs/standalone-config/generated.js src/js/settings/generated.js",
-    "build:all": "npm run build:configs && pebble build",
-    "build:phone": "npm run build:all && pebble install --phone",
-    "build:emulator": "npm run build:all && pebble install --emulator"
+    "build:all": "pebble build",
+    "build:emulator": "pebble build && pebble install --emulator basalt",
+    "build:emery": "pebble build && pebble install --emulator emery"
   }
 }

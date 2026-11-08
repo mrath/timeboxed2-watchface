@@ -72,14 +72,6 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
         return;
     }
 
-    Tuple *update_tuple = dict_find(iterator, KEY_HASUPDATE);
-    if (update_tuple) {
-        int update_val = update_tuple->value->int8;
-        persist_write_int(KEY_HASUPDATE, update_val);
-        notify_update(update_val);
-        return;
-    }
-
     Tuple *temp_tuple = dict_find(iterator, KEY_TEMP);
     Tuple *max_tuple = dict_find(iterator, KEY_MAX);
     Tuple *min_tuple = dict_find(iterator, KEY_MIN);
@@ -620,10 +612,15 @@ static void init(void) {
     app_message_register_outbox_failed(outbox_failed_callback);
     app_message_register_outbox_sent(outbox_sent_callback);
 
-    #if !defined PBL_PLATFORM_APLITE
-    app_message_open(1024, 64);
-    #else
+    // Use the maximum available inbox so all ~130 Clay config keys fit in a
+    // single AppMessage from the phone.  The outbox only needs to hold small
+    // watch→phone requests (KEY_REQUESTWEATHER, KEY_REQUESTCRYPTO), so 256 bytes
+    // is ample and avoids wasting precious RAM on the outbox direction.
+    // Aplite has only 24 KB RAM total, so cap its inbox conservatively.
+    #if defined(PBL_PLATFORM_APLITE)
     app_message_open(512, 64);
+    #else
+    app_message_open(app_message_inbox_size_maximum(), 256);
     #endif
 
     connection_service_subscribe((ConnectionHandlers) {

@@ -20,9 +20,9 @@ static bool sleep_status_updated;
 static char steps_text[8];
 static char cal_text[10];
 static char dist_text[10];
-static char sleep_text[8];
-static char deep_text[8];
-static char active_text[8];
+static char sleep_text[16];
+static char deep_text[16];
+static char active_text[16];
 static char heart_text[10];
 
 static void clear_health_fields() {
@@ -354,6 +354,9 @@ void health_handler(HealthEventType event, void *context) {
         case HealthEventHeartRateUpdate:
             APP_LOG(APP_LOG_LEVEL_DEBUG, "Requesting update from event. %d%03d", (int)time(NULL), (int)time_ms(NULL, NULL));
             queue_health_update();
+            break;
+        case HealthEventHRVUpdate:
+            // HRV (heart rate variability) updates are new in SDK 4.44 – ignore.
             break;
     }
 }

@@ -10,8 +10,22 @@ GPoint create_point(int x, int y) {
     return point;
 }
 
+// Scale midpoint-relative y offsets for the larger 200×228 Pebble Time 2 screen.
+// All other platforms use unchanged values.
+#if defined(PBL_PLATFORM_EMERY) || defined(PBL_PLATFORM_FLINT)
+#define EMERY_Y(v) ((v) * 7 / 5)
+#else
+#define EMERY_Y(v) (v)
+#endif
+
 #ifndef PBL_ROUND
+// Pebble Time 2 (emery/flint) has a 200×228 screen (~1.4× basalt).
+// Scale module_height proportionally so bottom slots don't overlap the clock.
+#if defined(PBL_PLATFORM_EMERY) || defined(PBL_PLATFORM_FLINT)
+static int module_height = 36;
+#else
 static int module_height = 26;
+#endif
 
 static int get_pos(int alignment, int left_pos, int center_pos, int right_pos) {
     switch (alignment) {
@@ -33,22 +47,22 @@ static void get_text_positions_blocko(GTextAlignment align, struct TextPositions
     int midpoint = height / 2;
     positions->hours = create_point(
         PBL_IF_ROUND_ELSE(0, 2),
-        midpoint - 46
+        midpoint - EMERY_Y(46)
     );
     positions->date = create_point(
         PBL_IF_ROUND_ELSE(0, 2),
-        midpoint + 6
+        midpoint + EMERY_Y(6)
     );
     positions->bluetooth = create_point(
-        PBL_IF_ROUND_ELSE(134, get_pos(align, -4, 126, 0)),
-        PBL_IF_ROUND_ELSE(midpoint + 34,
-            get_pos(align, midpoint - 24, midpoint + 34, midpoint - 24)
+        PBL_IF_ROUND_ELSE(134, get_pos(align, -4, width - 18, 0)),
+        PBL_IF_ROUND_ELSE(midpoint + EMERY_Y(34),
+            get_pos(align, midpoint - EMERY_Y(24), midpoint + EMERY_Y(34), midpoint - EMERY_Y(24))
         )
     );
     positions->updates = create_point(
-        PBL_IF_ROUND_ELSE(120, get_pos(align, -4, 112, 0)),
-        PBL_IF_ROUND_ELSE(midpoint + 34,
-            get_pos(align, midpoint - 6, midpoint + 34, midpoint - 6)
+        PBL_IF_ROUND_ELSE(120, get_pos(align, -4, width - 32, 0)),
+        PBL_IF_ROUND_ELSE(midpoint + EMERY_Y(34),
+            get_pos(align, midpoint - EMERY_Y(6), midpoint + EMERY_Y(34), midpoint - EMERY_Y(6))
         )
     );
 }
@@ -57,22 +71,22 @@ static void get_text_positions_blocko_big(GTextAlignment align, struct TextPosit
     int midpoint = height / 2;
     positions->hours = create_point(
         PBL_IF_ROUND_ELSE(0, 2),
-        midpoint - 52
+        midpoint - EMERY_Y(52)
     );
     positions->date = create_point(
         PBL_IF_ROUND_ELSE(0, 2),
-        midpoint + 4
+        midpoint + EMERY_Y(4)
     );
     positions->bluetooth = create_point(
-        PBL_IF_ROUND_ELSE(134, get_pos(align, -4, 126, 0)),
-        PBL_IF_ROUND_ELSE(midpoint + 40,
-            get_pos(align, midpoint - 30, midpoint + 40, midpoint - 30)
+        PBL_IF_ROUND_ELSE(134, get_pos(align, -4, width - 18, 0)),
+        PBL_IF_ROUND_ELSE(midpoint + EMERY_Y(40),
+            get_pos(align, midpoint - EMERY_Y(30), midpoint + EMERY_Y(40), midpoint - EMERY_Y(30))
         )
     );
     positions->updates = create_point(
-        PBL_IF_ROUND_ELSE(120, get_pos(align, -4, 112, 0)),
-        PBL_IF_ROUND_ELSE(midpoint + 40,
-            get_pos(align, midpoint - 8, midpoint + 40, midpoint - 8)
+        PBL_IF_ROUND_ELSE(120, get_pos(align, -4, width - 32, 0)),
+        PBL_IF_ROUND_ELSE(midpoint + EMERY_Y(40),
+            get_pos(align, midpoint - EMERY_Y(8), midpoint + EMERY_Y(40), midpoint - EMERY_Y(8))
         )
     );
 }
@@ -81,22 +95,22 @@ static void get_text_positions_system(GTextAlignment align, struct TextPositions
     int midpoint = height / 2;
     positions->hours = create_point(
         PBL_IF_ROUND_ELSE(0, 2),
-        midpoint - 42
+        midpoint - EMERY_Y(42)
     );
     positions->date = create_point(
         PBL_IF_ROUND_ELSE(0, 2),
-        midpoint + 2
+        midpoint + EMERY_Y(2)
     );
     positions->bluetooth = create_point(
-        PBL_IF_ROUND_ELSE(134, get_pos(align, -4, 126, 0)),
-        PBL_IF_ROUND_ELSE(midpoint + 40,
-                get_pos(align, midpoint - 30, midpoint + 40, midpoint - 30)
+        PBL_IF_ROUND_ELSE(134, get_pos(align, -4, width - 18, 0)),
+        PBL_IF_ROUND_ELSE(midpoint + EMERY_Y(40),
+                get_pos(align, midpoint - EMERY_Y(30), midpoint + EMERY_Y(40), midpoint - EMERY_Y(30))
             )
     );
     positions->updates = create_point(
-        PBL_IF_ROUND_ELSE(120, get_pos(align, -4, 112, 0)),
-        PBL_IF_ROUND_ELSE(midpoint + 40,
-                get_pos(align, midpoint - 8, midpoint + 40, midpoint - 8)
+        PBL_IF_ROUND_ELSE(120, get_pos(align, -4, width - 32, 0)),
+        PBL_IF_ROUND_ELSE(midpoint + EMERY_Y(40),
+                get_pos(align, midpoint - EMERY_Y(8), midpoint + EMERY_Y(40), midpoint - EMERY_Y(8))
             )
     );
 }
@@ -105,22 +119,22 @@ static void get_text_positions_archivo(GTextAlignment align, struct TextPosition
     int midpoint = height / 2;
     positions->hours = create_point(
         PBL_IF_ROUND_ELSE(0, 2),
-        midpoint - 44
+        midpoint - EMERY_Y(44)
     );
     positions->date = create_point(
         PBL_IF_ROUND_ELSE(0, 2),
-        midpoint + 8
+        midpoint + EMERY_Y(8)
     );
     positions->bluetooth = create_point(
-        PBL_IF_ROUND_ELSE(134, get_pos(align, -4, 126, 0)),
-        PBL_IF_ROUND_ELSE(midpoint + 40,
-            get_pos(align, midpoint - 30, midpoint + 40, midpoint - 30)
+        PBL_IF_ROUND_ELSE(134, get_pos(align, -4, width - 18, 0)),
+        PBL_IF_ROUND_ELSE(midpoint + EMERY_Y(40),
+            get_pos(align, midpoint - EMERY_Y(30), midpoint + EMERY_Y(40), midpoint - EMERY_Y(30))
         )
     );
     positions->updates = create_point(
-        PBL_IF_ROUND_ELSE(120, get_pos(align, -4, 112, 0)),
-        PBL_IF_ROUND_ELSE(midpoint + 40,
-            get_pos(align, midpoint - 8, midpoint + 40, midpoint - 8)
+        PBL_IF_ROUND_ELSE(120, get_pos(align, -4, width - 32, 0)),
+        PBL_IF_ROUND_ELSE(midpoint + EMERY_Y(40),
+            get_pos(align, midpoint - EMERY_Y(8), midpoint + EMERY_Y(40), midpoint - EMERY_Y(8))
         )
     );
 }
@@ -129,22 +143,22 @@ static void get_text_positions_din(GTextAlignment align, struct TextPositions* p
     int midpoint = height / 2;
     positions->hours = create_point(
         PBL_IF_ROUND_ELSE(0, 2),
-        midpoint - 45
+        midpoint - EMERY_Y(45)
     );
     positions->date = create_point(
         PBL_IF_ROUND_ELSE(0, 2),
-        midpoint + 8
+        midpoint + EMERY_Y(8)
     );
     positions->bluetooth = create_point(
-        PBL_IF_ROUND_ELSE(134, get_pos(align, -4, 126, 0)),
-        PBL_IF_ROUND_ELSE(midpoint + 40,
-            get_pos(align, midpoint - 30, midpoint + 40, midpoint - 30)
+        PBL_IF_ROUND_ELSE(134, get_pos(align, -4, width - 18, 0)),
+        PBL_IF_ROUND_ELSE(midpoint + EMERY_Y(40),
+            get_pos(align, midpoint - EMERY_Y(30), midpoint + EMERY_Y(40), midpoint - EMERY_Y(30))
         )
     );
     positions->updates = create_point(
-        PBL_IF_ROUND_ELSE(120, get_pos(align, -4, 112, 0)),
-        PBL_IF_ROUND_ELSE(midpoint + 40,
-            get_pos(align, midpoint - 8, midpoint + 40, midpoint - 8)
+        PBL_IF_ROUND_ELSE(120, get_pos(align, -4, width - 32, 0)),
+        PBL_IF_ROUND_ELSE(midpoint + EMERY_Y(40),
+            get_pos(align, midpoint - EMERY_Y(8), midpoint + EMERY_Y(40), midpoint - EMERY_Y(8))
         )
     );
 }
@@ -153,22 +167,22 @@ static void get_text_positions_prototype(GTextAlignment align, struct TextPositi
     int midpoint = height / 2;
     positions->hours = create_point(
         PBL_IF_ROUND_ELSE(0, 2),
-        midpoint - 40
+        midpoint - EMERY_Y(40)
     );
     positions->date = create_point(
         PBL_IF_ROUND_ELSE(0, 2),
-        midpoint + 8
+        midpoint + EMERY_Y(8)
     );
     positions->bluetooth = create_point(
-        PBL_IF_ROUND_ELSE(134, get_pos(align, -2, 126, -2)),
-        PBL_IF_ROUND_ELSE(midpoint + 34,
-            get_pos(align, midpoint - 24, midpoint + 34, midpoint - 24)
+        PBL_IF_ROUND_ELSE(134, get_pos(align, -2, width - 18, -2)),
+        PBL_IF_ROUND_ELSE(midpoint + EMERY_Y(34),
+            get_pos(align, midpoint - EMERY_Y(24), midpoint + EMERY_Y(34), midpoint - EMERY_Y(24))
         )
     );
     positions->updates = create_point(
-        PBL_IF_ROUND_ELSE(120, get_pos(align, -2, 112, -2)),
-        PBL_IF_ROUND_ELSE(midpoint + 34,
-            get_pos(align, midpoint - 6, midpoint + 34, midpoint - 6)
+        PBL_IF_ROUND_ELSE(120, get_pos(align, -2, width - 32, -2)),
+        PBL_IF_ROUND_ELSE(midpoint + EMERY_Y(34),
+            get_pos(align, midpoint - EMERY_Y(6), midpoint + EMERY_Y(34), midpoint - EMERY_Y(6))
         )
     );
 }
@@ -177,22 +191,22 @@ static void get_text_positions_leco(GTextAlignment align, struct TextPositions* 
     int midpoint = height / 2;
     positions->hours = create_point(
         PBL_IF_ROUND_ELSE(0, 2),
-        midpoint - 38
+        midpoint - EMERY_Y(38)
     );
     positions->date = create_point(
         PBL_IF_ROUND_ELSE(0, 2),
-        midpoint + 9
+        midpoint + EMERY_Y(9)
     );
     positions->bluetooth = create_point(
-        PBL_IF_ROUND_ELSE(134, get_pos(align, -4, 126, -2)),
-        PBL_IF_ROUND_ELSE(midpoint + 34,
-            get_pos(align, midpoint - 26, midpoint + 34, midpoint - 26)
+        PBL_IF_ROUND_ELSE(134, get_pos(align, -4, width - 18, -2)),
+        PBL_IF_ROUND_ELSE(midpoint + EMERY_Y(34),
+            get_pos(align, midpoint - EMERY_Y(26), midpoint + EMERY_Y(34), midpoint - EMERY_Y(26))
         )
     );
     positions->updates = create_point(
-        PBL_IF_ROUND_ELSE(120, get_pos(align, -4, 112, -2)),
-        PBL_IF_ROUND_ELSE(midpoint + 34,
-            get_pos(align, midpoint - 8, midpoint + 34, midpoint - 8)
+        PBL_IF_ROUND_ELSE(120, get_pos(align, -4, width - 32, -2)),
+        PBL_IF_ROUND_ELSE(midpoint + EMERY_Y(34),
+            get_pos(align, midpoint - EMERY_Y(8), midpoint + EMERY_Y(34), midpoint - EMERY_Y(8))
         )
     );
 }
@@ -201,22 +215,22 @@ static void get_text_positions_konstruct(GTextAlignment align, struct TextPositi
     int midpoint = height / 2;
     positions->hours = create_point(
         PBL_IF_ROUND_ELSE(0, 2),
-        midpoint - 24
+        midpoint - EMERY_Y(24)
     );
     positions->date = create_point(
         PBL_IF_ROUND_ELSE(0, 2),
-        midpoint + 10
+        midpoint + EMERY_Y(10)
     );
     positions->bluetooth = create_point(
-        PBL_IF_ROUND_ELSE(134, get_pos(align, -4, 126, -2)),
-        PBL_IF_ROUND_ELSE(midpoint + 40,
-            get_pos(align, midpoint - 30, midpoint + 40, midpoint - 30)
+        PBL_IF_ROUND_ELSE(134, get_pos(align, -4, width - 18, -2)),
+        PBL_IF_ROUND_ELSE(midpoint + EMERY_Y(40),
+            get_pos(align, midpoint - EMERY_Y(30), midpoint + EMERY_Y(40), midpoint - EMERY_Y(30))
         )
     );
     positions->updates = create_point(
-        PBL_IF_ROUND_ELSE(120, get_pos(align, -4, 112, -2)),
-        PBL_IF_ROUND_ELSE(midpoint + 40,
-            get_pos(align, midpoint - 8, midpoint + 40, midpoint - 8)
+        PBL_IF_ROUND_ELSE(120, get_pos(align, -4, width - 32, -2)),
+        PBL_IF_ROUND_ELSE(midpoint + EMERY_Y(40),
+            get_pos(align, midpoint - EMERY_Y(8), midpoint + EMERY_Y(40), midpoint - EMERY_Y(8))
         )
     );
 }
