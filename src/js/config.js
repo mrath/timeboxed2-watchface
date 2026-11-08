@@ -49,7 +49,7 @@ module.exports = [
             { type: 'heading', defaultValue: 'Font & Layout' },
             {
                 type: 'select',
-                messageKey: 'FONTTYPE',
+                messageKey: 'KEY_FONTTYPE',
                 label: 'Font',
                 defaultValue: 6,
                 options: [
@@ -65,7 +65,7 @@ module.exports = [
             },
             {
                 type: 'select',
-                messageKey: 'TEXTALIGN',
+                messageKey: 'KEY_TEXTALIGN',
                 label: 'Text Alignment',
                 defaultValue: 2,
                 options: [
@@ -76,19 +76,19 @@ module.exports = [
             },
             {
                 type: 'toggle',
-                messageKey: 'SIMPLEMODE',
+                messageKey: 'KEY_SIMPLEMODE',
                 label: 'Simple Mode (clock only)',
                 defaultValue: false
             },
             {
                 type: 'toggle',
-                messageKey: 'ENABLEADVANCED',
+                messageKey: 'KEY_ENABLEADVANCED',
                 label: 'Show advanced info',
                 defaultValue: true
             },
             {
                 type: 'toggle',
-                messageKey: 'QUICKVIEW',
+                messageKey: 'KEY_QUICKVIEW',
                 label: 'Avoid Quick View bar',
                 defaultValue: false
             }
@@ -103,7 +103,7 @@ module.exports = [
             { type: 'heading', defaultValue: 'Date & Time' },
             {
                 type: 'select',
-                messageKey: 'DATEFORMAT',
+                messageKey: 'KEY_DATEFORMAT',
                 label: 'Date Format',
                 defaultValue: 0,
                 options: [
@@ -123,7 +123,7 @@ module.exports = [
             },
             {
                 type: 'select',
-                messageKey: 'DATESEPARATOR',
+                messageKey: 'KEY_DATESEPARATOR',
                 label: 'Date Separator',
                 defaultValue: 0,
                 options: [
@@ -135,13 +135,13 @@ module.exports = [
             },
             {
                 type: 'toggle',
-                messageKey: 'LEADINGZERO',
+                messageKey: 'KEY_LEADINGZERO',
                 label: 'Leading zero on hour',
                 defaultValue: false
             },
             {
                 type: 'select',
-                messageKey: 'LOCALE',
+                messageKey: 'KEY_LOCALE',
                 label: 'Language',
                 defaultValue: 0,
                 options: [
@@ -172,13 +172,13 @@ module.exports = [
             { type: 'heading', defaultValue: 'Timezone A' },
             {
                 type: 'input',
-                messageKey: 'TIMEZONESCODE',
+                messageKey: 'KEY_TIMEZONESCODE',
                 label: 'Label (e.g. UTC)',
                 defaultValue: ''
             },
             {
                 type: 'select',
-                messageKey: 'TIMEZONES',
+                messageKey: 'KEY_TIMEZONES',
                 label: 'Hour offset',
                 defaultValue: 0,
                 options: (function() {
@@ -191,7 +191,7 @@ module.exports = [
             },
             {
                 type: 'select',
-                messageKey: 'TIMEZONESMINUTES',
+                messageKey: 'KEY_TIMEZONESMINUTES',
                 label: 'Minute offset',
                 defaultValue: 0,
                 options: [
@@ -212,13 +212,13 @@ module.exports = [
             { type: 'heading', defaultValue: 'Timezone B' },
             {
                 type: 'input',
-                messageKey: 'TIMEZONESBCODE',
+                messageKey: 'KEY_TIMEZONESBCODE',
                 label: 'Label (e.g. EST)',
                 defaultValue: ''
             },
             {
                 type: 'select',
-                messageKey: 'TIMEZONESB',
+                messageKey: 'KEY_TIMEZONESB',
                 label: 'Hour offset',
                 defaultValue: 0,
                 options: (function() {
@@ -231,7 +231,7 @@ module.exports = [
             },
             {
                 type: 'select',
-                messageKey: 'TIMEZONESBMINUTES',
+                messageKey: 'KEY_TIMEZONESBMINUTES',
                 label: 'Minute offset',
                 defaultValue: 0,
                 options: [
@@ -256,19 +256,19 @@ module.exports = [
             },
             {
                 type: 'toggle',
-                messageKey: 'ENABLEWEATHER',
+                messageKey: 'KEY_ENABLEWEATHER',
                 label: 'Enable weather widgets',
                 defaultValue: true
             },
             {
                 type: 'toggle',
-                messageKey: 'USECELSIUS',
+                messageKey: 'KEY_USECELSIUS',
                 label: 'Use Celsius',
                 defaultValue: true
             },
             {
                 type: 'select',
-                messageKey: 'WEATHERTIME',
+                messageKey: 'KEY_WEATHERTIME',
                 label: 'Weather refresh (minutes)',
                 defaultValue: 30,
                 options: [
@@ -279,7 +279,7 @@ module.exports = [
             },
             {
                 type: 'select',
-                messageKey: 'SPEEDUNIT',
+                messageKey: 'KEY_SPEEDUNIT',
                 label: 'Wind speed unit',
                 defaultValue: 0,
                 options: [
@@ -298,12 +298,12 @@ module.exports = [
         items: [
             { type: 'heading', defaultValue: 'Widget Slots (Normal Mode)' },
             { type: 'text', defaultValue: 'Slots A-D form a 2×2 grid around the clock. E is above, F is below.' },
-            slotSelect('Slot A (top-left)',   'SLOTA', 1),
-            slotSelect('Slot B (top-right)',  'SLOTB', 2),
-            slotSelect('Slot C (bot-left)',   'SLOTC', 3),
-            slotSelect('Slot D (bot-right)',  'SLOTD', 14),
-            slotSelect('Slot E (above clock)', 'SLOTE', 18),
-            slotSelect('Slot F (below clock)', 'SLOTF', 19)
+            slotSelect('Slot A (top-left)',   'KEY_SLOTA', 1),
+            slotSelect('Slot B (top-right)',  'KEY_SLOTB', 2),
+            slotSelect('Slot C (bot-left)',   'KEY_SLOTC', 3),
+            slotSelect('Slot D (bot-right)',  'KEY_SLOTD', 14),
+            slotSelect('Slot E (above clock)', 'KEY_SLOTE', 18),
+            slotSelect('Slot F (below clock)', 'KEY_SLOTF', 19)
         ]
     },
     // -----------------------------------------------------------------------
@@ -313,12 +313,12 @@ module.exports = [
         type: 'section',
         items: [
             { type: 'heading', defaultValue: 'Widget Slots (Sleep Mode)' },
-            slotSelect('Sleep Slot A', 'SLEEPSLOTA', 6),
-            slotSelect('Sleep Slot B', 'SLEEPSLOTB', 7),
-            slotSelect('Sleep Slot C', 'SLEEPSLOTC', -1),
-            slotSelect('Sleep Slot D', 'SLEEPSLOTD', -1),
-            slotSelect('Sleep Slot E', 'SLEEPSLOTE', -1),
-            slotSelect('Sleep Slot F', 'SLEEPSLOTF', -1)
+            slotSelect('Sleep Slot A', 'KEY_SLEEPSLOTA', 6),
+            slotSelect('Sleep Slot B', 'KEY_SLEEPSLOTB', 7),
+            slotSelect('Sleep Slot C', 'KEY_SLEEPSLOTC', -1),
+            slotSelect('Sleep Slot D', 'KEY_SLEEPSLOTD', -1),
+            slotSelect('Sleep Slot E', 'KEY_SLEEPSLOTE', -1),
+            slotSelect('Sleep Slot F', 'KEY_SLEEPSLOTF', -1)
         ]
     },
     // -----------------------------------------------------------------------
@@ -328,12 +328,12 @@ module.exports = [
         type: 'section',
         items: [
             { type: 'heading', defaultValue: 'Widget Slots (Tap Mode)' },
-            slotSelect('Tap Slot A', 'TAPSLOTA', -1),
-            slotSelect('Tap Slot B', 'TAPSLOTB', -1),
-            slotSelect('Tap Slot C', 'TAPSLOTC', -1),
-            slotSelect('Tap Slot D', 'TAPSLOTD', -1),
-            slotSelect('Tap Slot E', 'TAPSLOTE', -1),
-            slotSelect('Tap Slot F', 'TAPSLOTF', -1)
+            slotSelect('Tap Slot A', 'KEY_TAPSLOTA', -1),
+            slotSelect('Tap Slot B', 'KEY_TAPSLOTB', -1),
+            slotSelect('Tap Slot C', 'KEY_TAPSLOTC', -1),
+            slotSelect('Tap Slot D', 'KEY_TAPSLOTD', -1),
+            slotSelect('Tap Slot E', 'KEY_TAPSLOTE', -1),
+            slotSelect('Tap Slot F', 'KEY_TAPSLOTF', -1)
         ]
     },
     // -----------------------------------------------------------------------
@@ -343,12 +343,12 @@ module.exports = [
         type: 'section',
         items: [
             { type: 'heading', defaultValue: 'Widget Slots (Wrist-Raise Mode)' },
-            slotSelect('Wrist Slot A', 'WRISTSLOTA', -1),
-            slotSelect('Wrist Slot B', 'WRISTSLOTB', -1),
-            slotSelect('Wrist Slot C', 'WRISTSLOTC', -1),
-            slotSelect('Wrist Slot D', 'WRISTSLOTD', -1),
-            slotSelect('Wrist Slot E', 'WRISTSLOTE', -1),
-            slotSelect('Wrist Slot F', 'WRISTSLOTF', -1)
+            slotSelect('Wrist Slot A', 'KEY_WRISTSLOTA', -1),
+            slotSelect('Wrist Slot B', 'KEY_WRISTSLOTB', -1),
+            slotSelect('Wrist Slot C', 'KEY_WRISTSLOTC', -1),
+            slotSelect('Wrist Slot D', 'KEY_WRISTSLOTD', -1),
+            slotSelect('Wrist Slot E', 'KEY_WRISTSLOTE', -1),
+            slotSelect('Wrist Slot F', 'KEY_WRISTSLOTF', -1)
         ]
     },
     // -----------------------------------------------------------------------
@@ -360,19 +360,19 @@ module.exports = [
             { type: 'heading', defaultValue: 'Notifications & Alerts' },
             {
                 type: 'toggle',
-                messageKey: 'BLUETOOTHDISCONNECT',
+                messageKey: 'KEY_BLUETOOTHDISCONNECT',
                 label: 'Vibrate on Bluetooth disconnect',
                 defaultValue: true
             },
             {
                 type: 'toggle',
-                messageKey: 'UPDATE',
+                messageKey: 'KEY_UPDATE',
                 label: 'Show update notification',
                 defaultValue: false
             },
             {
                 type: 'toggle',
-                messageKey: 'MUTEONQUIET',
+                messageKey: 'KEY_MUTEONQUIET',
                 label: 'Mute vibration in quiet time',
                 defaultValue: false
             }
@@ -387,38 +387,38 @@ module.exports = [
             { type: 'heading', defaultValue: 'Health' },
             {
                 type: 'toggle',
-                messageKey: 'ENABLEHEALTH',
+                messageKey: 'KEY_ENABLEHEALTH',
                 label: 'Enable health tracking',
                 defaultValue: true
             },
             {
                 type: 'toggle',
-                messageKey: 'SHOWSLEEP',
+                messageKey: 'KEY_SHOWSLEEP',
                 label: 'Show sleep data',
                 defaultValue: true
             },
             {
                 type: 'toggle',
-                messageKey: 'USEKM',
+                messageKey: 'KEY_USEKM',
                 label: 'Use kilometers for distance',
                 defaultValue: false
             },
             {
                 type: 'toggle',
-                messageKey: 'USECAL',
+                messageKey: 'KEY_USECAL',
                 label: 'Show calories (not kcal)',
                 defaultValue: false
             },
             {
                 type: 'input',
-                messageKey: 'HEARTLOW',
+                messageKey: 'KEY_HEARTLOW',
                 label: 'Heart rate low threshold',
                 defaultValue: '60',
                 attributes: { type: 'number', min: 0, max: 300 }
             },
             {
                 type: 'input',
-                messageKey: 'HEARTHIGH',
+                messageKey: 'KEY_HEARTHIGH',
                 label: 'Heart rate high threshold',
                 defaultValue: '100',
                 attributes: { type: 'number', min: 0, max: 300 }
@@ -434,13 +434,13 @@ module.exports = [
             { type: 'heading', defaultValue: 'Tap & Wrist-Raise' },
             {
                 type: 'toggle',
-                messageKey: 'SHOWTAP',
+                messageKey: 'KEY_SHOWTAP',
                 label: 'Enable tap mode',
                 defaultValue: false
             },
             {
                 type: 'select',
-                messageKey: 'TAPTIME',
+                messageKey: 'KEY_TAPTIME',
                 label: 'Tap mode duration (seconds)',
                 defaultValue: 7,
                 options: [
@@ -452,7 +452,7 @@ module.exports = [
             },
             {
                 type: 'toggle',
-                messageKey: 'SHOWWRIST',
+                messageKey: 'KEY_SHOWWRIST',
                 label: 'Enable wrist-raise mode',
                 defaultValue: true
             }
@@ -465,29 +465,29 @@ module.exports = [
         type: 'section',
         items: [
             { type: 'heading', defaultValue: 'Colors' },
-            { type: 'color', messageKey: 'BGCOLOR',           label: 'Background',         defaultValue: '0x000000' },
-            { type: 'color', messageKey: 'HOURSCOLOR',        label: 'Hours',               defaultValue: '0xFFFFFF' },
-            { type: 'color', messageKey: 'ALTHOURSCOLOR',     label: 'Alt Hours (Tz A)',     defaultValue: '0xAAAAAA' },
-            { type: 'color', messageKey: 'ALTHOURSBCOLOR',    label: 'Alt Hours (Tz B)',     defaultValue: '0xAAAAAA' },
-            { type: 'color', messageKey: 'DATECOLOR',         label: 'Date',                defaultValue: '0xFFFFFF' },
-            { type: 'color', messageKey: 'BLUETOOTHCOLOR',    label: 'Bluetooth icon',      defaultValue: '0xFFFFFF' },
-            { type: 'color', messageKey: 'UPDATECOLOR',       label: 'Update icon',         defaultValue: '0xFFFFFF' },
-            { type: 'color', messageKey: 'BATTERYCOLOR',      label: 'Battery',             defaultValue: '0xFFFFFF' },
-            { type: 'color', messageKey: 'BATTERYLOWCOLOR',   label: 'Battery low',         defaultValue: '0xFF0000' },
-            { type: 'color', messageKey: 'TEMPCOLOR',         label: 'Temperature',         defaultValue: '0xFFFFFF' },
-            { type: 'color', messageKey: 'WEATHERCOLOR',      label: 'Weather icon',        defaultValue: '0xFFFFFF' },
-            { type: 'color', messageKey: 'MINCOLOR',          label: 'Min temperature',     defaultValue: '0xFFFFFF' },
-            { type: 'color', messageKey: 'MAXCOLOR',          label: 'Max temperature',     defaultValue: '0xFFFFFF' },
-            { type: 'color', messageKey: 'WINDDIRCOLOR',      label: 'Wind direction',      defaultValue: '0xFFFFFF' },
-            { type: 'color', messageKey: 'WINDSPEEDCOLOR',    label: 'Wind speed',          defaultValue: '0xFFFFFF' },
-            { type: 'color', messageKey: 'COMPASSCOLOR',      label: 'Compass',             defaultValue: '0xFFFFFF' },
-            { type: 'color', messageKey: 'SUNRISECOLOR',      label: 'Sunrise',             defaultValue: '0xFFFF00' },
-            { type: 'color', messageKey: 'SUNSETCOLOR',       label: 'Sunset',              defaultValue: '0xFF8000' },
-            { type: 'color', messageKey: 'SECONDSCOLOR',      label: 'Seconds',             defaultValue: '0xFFFFFF' },
-            { type: 'color', messageKey: 'CRYPTOCOLOR',       label: 'Crypto A',            defaultValue: '0xFFFFFF' },
-            { type: 'color', messageKey: 'CRYPTOBCOLOR',      label: 'Crypto B',            defaultValue: '0xFFFFFF' },
-            { type: 'color', messageKey: 'CRYPTOCCOLOR',      label: 'Crypto C',            defaultValue: '0xFFFFFF' },
-            { type: 'color', messageKey: 'CRYPTODCOLOR',      label: 'Crypto D',            defaultValue: '0xFFFFFF' }
+            { type: 'color', messageKey: 'KEY_BGCOLOR',           label: 'Background',         defaultValue: '0x000000' },
+            { type: 'color', messageKey: 'KEY_HOURSCOLOR',        label: 'Hours',               defaultValue: '0xFFFFFF' },
+            { type: 'color', messageKey: 'KEY_ALTHOURSCOLOR',     label: 'Alt Hours (Tz A)',     defaultValue: '0xAAAAAA' },
+            { type: 'color', messageKey: 'KEY_ALTHOURSBCOLOR',    label: 'Alt Hours (Tz B)',     defaultValue: '0xAAAAAA' },
+            { type: 'color', messageKey: 'KEY_DATECOLOR',         label: 'Date',                defaultValue: '0xFFFFFF' },
+            { type: 'color', messageKey: 'KEY_BLUETOOTHCOLOR',    label: 'Bluetooth icon',      defaultValue: '0xFFFFFF' },
+            { type: 'color', messageKey: 'KEY_UPDATECOLOR',       label: 'Update icon',         defaultValue: '0xFFFFFF' },
+            { type: 'color', messageKey: 'KEY_BATTERYCOLOR',      label: 'Battery',             defaultValue: '0xFFFFFF' },
+            { type: 'color', messageKey: 'KEY_BATTERYLOWCOLOR',   label: 'Battery low',         defaultValue: '0xFF0000' },
+            { type: 'color', messageKey: 'KEY_TEMPCOLOR',         label: 'Temperature',         defaultValue: '0xFFFFFF' },
+            { type: 'color', messageKey: 'KEY_WEATHERCOLOR',      label: 'Weather icon',        defaultValue: '0xFFFFFF' },
+            { type: 'color', messageKey: 'KEY_MINCOLOR',          label: 'Min temperature',     defaultValue: '0xFFFFFF' },
+            { type: 'color', messageKey: 'KEY_MAXCOLOR',          label: 'Max temperature',     defaultValue: '0xFFFFFF' },
+            { type: 'color', messageKey: 'KEY_WINDDIRCOLOR',      label: 'Wind direction',      defaultValue: '0xFFFFFF' },
+            { type: 'color', messageKey: 'KEY_WINDSPEEDCOLOR',    label: 'Wind speed',          defaultValue: '0xFFFFFF' },
+            { type: 'color', messageKey: 'KEY_COMPASSCOLOR',      label: 'Compass',             defaultValue: '0xFFFFFF' },
+            { type: 'color', messageKey: 'KEY_SUNRISECOLOR',      label: 'Sunrise',             defaultValue: '0xFFFF00' },
+            { type: 'color', messageKey: 'KEY_SUNSETCOLOR',       label: 'Sunset',              defaultValue: '0xFF8000' },
+            { type: 'color', messageKey: 'KEY_SECONDSCOLOR',      label: 'Seconds',             defaultValue: '0xFFFFFF' },
+            { type: 'color', messageKey: 'KEY_CRYPTOCOLOR',       label: 'Crypto A',            defaultValue: '0xFFFFFF' },
+            { type: 'color', messageKey: 'KEY_CRYPTOBCOLOR',      label: 'Crypto B',            defaultValue: '0xFFFFFF' },
+            { type: 'color', messageKey: 'KEY_CRYPTOCCOLOR',      label: 'Crypto C',            defaultValue: '0xFFFFFF' },
+            { type: 'color', messageKey: 'KEY_CRYPTODCOLOR',      label: 'Crypto D',            defaultValue: '0xFFFFFF' }
         ]
     },
     // -----------------------------------------------------------------------
@@ -497,20 +497,20 @@ module.exports = [
         type: 'section',
         items: [
             { type: 'heading', defaultValue: 'Health Colors' },
-            { type: 'color', messageKey: 'STEPSCOLOR',       label: 'Steps',              defaultValue: '0xFFFFFF' },
-            { type: 'color', messageKey: 'STEPSBEHINDCOLOR', label: 'Steps (behind goal)', defaultValue: '0x777777' },
-            { type: 'color', messageKey: 'DISTCOLOR',        label: 'Distance',           defaultValue: '0xFFFFFF' },
-            { type: 'color', messageKey: 'DISTBEHINDCOLOR',  label: 'Distance (behind)',   defaultValue: '0x777777' },
-            { type: 'color', messageKey: 'CALCOLOR',         label: 'Calories',           defaultValue: '0xFFFFFF' },
-            { type: 'color', messageKey: 'CALBEHINDCOLOR',   label: 'Calories (behind)',   defaultValue: '0x777777' },
-            { type: 'color', messageKey: 'SLEEPCOLOR',       label: 'Sleep',              defaultValue: '0xFFFFFF' },
-            { type: 'color', messageKey: 'SLEEPBEHINDCOLOR', label: 'Sleep (behind goal)', defaultValue: '0x777777' },
-            { type: 'color', messageKey: 'DEEPCOLOR',        label: 'Deep sleep',         defaultValue: '0xFFFFFF' },
-            { type: 'color', messageKey: 'DEEPBEHINDCOLOR',  label: 'Deep sleep (behind)', defaultValue: '0x777777' },
-            { type: 'color', messageKey: 'ACTIVECOLOR',      label: 'Active calories',    defaultValue: '0xFFFFFF' },
-            { type: 'color', messageKey: 'ACTIVEBEHINDCOLOR',label: 'Active (behind)',     defaultValue: '0x777777' },
-            { type: 'color', messageKey: 'HEARTCOLOR',       label: 'Heart rate',         defaultValue: '0xFF0000' },
-            { type: 'color', messageKey: 'HEARTCOLOROFF',    label: 'Heart rate (resting)',defaultValue: '0xAA0000' }
+            { type: 'color', messageKey: 'KEY_STEPSCOLOR',       label: 'Steps',              defaultValue: '0xFFFFFF' },
+            { type: 'color', messageKey: 'KEY_STEPSBEHINDCOLOR', label: 'Steps (behind goal)', defaultValue: '0x777777' },
+            { type: 'color', messageKey: 'KEY_DISTCOLOR',        label: 'Distance',           defaultValue: '0xFFFFFF' },
+            { type: 'color', messageKey: 'KEY_DISTBEHINDCOLOR',  label: 'Distance (behind)',   defaultValue: '0x777777' },
+            { type: 'color', messageKey: 'KEY_CALCOLOR',         label: 'Calories',           defaultValue: '0xFFFFFF' },
+            { type: 'color', messageKey: 'KEY_CALBEHINDCOLOR',   label: 'Calories (behind)',   defaultValue: '0x777777' },
+            { type: 'color', messageKey: 'KEY_SLEEPCOLOR',       label: 'Sleep',              defaultValue: '0xFFFFFF' },
+            { type: 'color', messageKey: 'KEY_SLEEPBEHINDCOLOR', label: 'Sleep (behind goal)', defaultValue: '0x777777' },
+            { type: 'color', messageKey: 'KEY_DEEPCOLOR',        label: 'Deep sleep',         defaultValue: '0xFFFFFF' },
+            { type: 'color', messageKey: 'KEY_DEEPBEHINDCOLOR',  label: 'Deep sleep (behind)', defaultValue: '0x777777' },
+            { type: 'color', messageKey: 'KEY_ACTIVECOLOR',      label: 'Active calories',    defaultValue: '0xFFFFFF' },
+            { type: 'color', messageKey: 'KEY_ACTIVEBEHINDCOLOR',label: 'Active (behind)',     defaultValue: '0x777777' },
+            { type: 'color', messageKey: 'KEY_HEARTCOLOR',       label: 'Heart rate',         defaultValue: '0xFF0000' },
+            { type: 'color', messageKey: 'KEY_HEARTCOLOROFF',    label: 'Heart rate (resting)',defaultValue: '0xAA0000' }
         ]
     },
     // -----------------------------------------------------------------------
@@ -520,18 +520,18 @@ module.exports = [
         type: 'section',
         items: [
             { type: 'heading', defaultValue: 'Cryptocurrency A' },
-            { type: 'input', messageKey: 'CRYPTOFROM',   label: 'From symbol (e.g. BTC)',   defaultValue: '' },
-            { type: 'input', messageKey: 'CRYPTOTO',     label: 'To symbol (e.g. USD)',     defaultValue: '' },
-            { type: 'input', messageKey: 'CRYPTOMARKET', label: 'Market (e.g. CCCAGG)',     defaultValue: 'CCCAGG' },
+            { type: 'input', messageKey: 'KEY_CRYPTOFROM',   label: 'From symbol (e.g. BTC)',   defaultValue: '' },
+            { type: 'input', messageKey: 'KEY_CRYPTOTO',     label: 'To symbol (e.g. USD)',     defaultValue: '' },
+            { type: 'input', messageKey: 'KEY_CRYPTOMARKET', label: 'Market (e.g. CCCAGG)',     defaultValue: 'CCCAGG' },
             {
                 type: 'toggle',
-                messageKey: 'CRYPTOMULTI',
+                messageKey: 'KEY_CRYPTOMULTI',
                 label: 'Show in Satoshis (×10⁻⁸)',
                 defaultValue: false
             },
             {
                 type: 'select',
-                messageKey: 'CRYPTOTIME',
+                messageKey: 'KEY_CRYPTOTIME',
                 label: 'Crypto refresh (minutes)',
                 defaultValue: 15,
                 options: [
@@ -550,12 +550,12 @@ module.exports = [
         type: 'section',
         items: [
             { type: 'heading', defaultValue: 'Cryptocurrency B' },
-            { type: 'input', messageKey: 'CRYPTOFROMB',   label: 'From symbol', defaultValue: '' },
-            { type: 'input', messageKey: 'CRYPTOTOB',     label: 'To symbol',   defaultValue: '' },
-            { type: 'input', messageKey: 'CRYPTOMARKETB', label: 'Market',      defaultValue: 'CCCAGG' },
+            { type: 'input', messageKey: 'KEY_CRYPTOFROMB',   label: 'From symbol', defaultValue: '' },
+            { type: 'input', messageKey: 'KEY_CRYPTOTOB',     label: 'To symbol',   defaultValue: '' },
+            { type: 'input', messageKey: 'KEY_CRYPTOMARKETB', label: 'Market',      defaultValue: 'CCCAGG' },
             {
                 type: 'toggle',
-                messageKey: 'CRYPTOMULTIB',
+                messageKey: 'KEY_CRYPTOMULTIB',
                 label: 'Show in Satoshis',
                 defaultValue: false
             }
@@ -568,12 +568,12 @@ module.exports = [
         type: 'section',
         items: [
             { type: 'heading', defaultValue: 'Cryptocurrency C' },
-            { type: 'input', messageKey: 'CRYPTOFROMC',   label: 'From symbol', defaultValue: '' },
-            { type: 'input', messageKey: 'CRYPTOTOC',     label: 'To symbol',   defaultValue: '' },
-            { type: 'input', messageKey: 'CRYPTOMARKETC', label: 'Market',      defaultValue: 'CCCAGG' },
+            { type: 'input', messageKey: 'KEY_CRYPTOFROMC',   label: 'From symbol', defaultValue: '' },
+            { type: 'input', messageKey: 'KEY_CRYPTOTOC',     label: 'To symbol',   defaultValue: '' },
+            { type: 'input', messageKey: 'KEY_CRYPTOMARKETC', label: 'Market',      defaultValue: 'CCCAGG' },
             {
                 type: 'toggle',
-                messageKey: 'CRYPTOMULTIC',
+                messageKey: 'KEY_CRYPTOMULTIC',
                 label: 'Show in Satoshis',
                 defaultValue: false
             }
@@ -586,12 +586,12 @@ module.exports = [
         type: 'section',
         items: [
             { type: 'heading', defaultValue: 'Cryptocurrency D' },
-            { type: 'input', messageKey: 'CRYPTOFROMD',   label: 'From symbol', defaultValue: '' },
-            { type: 'input', messageKey: 'CRYPTOTOD',     label: 'To symbol',   defaultValue: '' },
-            { type: 'input', messageKey: 'CRYPTOMARKETD', label: 'Market',      defaultValue: 'CCCAGG' },
+            { type: 'input', messageKey: 'KEY_CRYPTOFROMD',   label: 'From symbol', defaultValue: '' },
+            { type: 'input', messageKey: 'KEY_CRYPTOTOD',     label: 'To symbol',   defaultValue: '' },
+            { type: 'input', messageKey: 'KEY_CRYPTOMARKETD', label: 'Market',      defaultValue: 'CCCAGG' },
             {
                 type: 'toggle',
-                messageKey: 'CRYPTOMULTID',
+                messageKey: 'KEY_CRYPTOMULTID',
                 label: 'Show in Satoshis',
                 defaultValue: false
             }
