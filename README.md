@@ -105,7 +105,7 @@ pebble screenshot --emulator basalt screenshot_basalt.png
 
 ## Contributing
 
-This repo lives at [github.com/mrath/timeboxed2](https://github.com/mrath/timeboxed2) — PRs welcome.  
+This repo lives at [github.com/mrath/timeboxed2-watchface](https://github.com/mrath/timeboxed2-watchface) — PRs welcome.  
 Please open an issue before working on large changes.
 
 ---
