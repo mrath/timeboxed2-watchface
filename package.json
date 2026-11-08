@@ -1,6 +1,6 @@
 {
-  "version": "6.1.0",
-  "author": "Mikkel Rath Hansen <mrha@mir-robots.com>",
+  "version": "7.0.0",
+  "author": "Mikkel Rath Hansen <mikkelrath@gmail.com>",
   "private": true,
   "dependencies": {
     "@rebble/clay": "^1.1.0"
@@ -796,5 +796,5 @@
   ],
   "description": "Highly customizable watchface for all Pebble models including Pebble Time 2 (emery). Fork of Timeboxed by Luis Bento, updated for Pebble SDK 4.44.",
   "longDescription": "Timeboxed 2 is a fork of the classic Timeboxed watchface, fully updated for Pebble SDK 4.44 and the new Pebble app.\n\nNew in this fork:\n\u2022 Native Pebble Time 2 (emery, 200\u00d7228) support with scaled fonts and layout\n\u2022 Weather powered by the Pebble app's built-in plugin \u2013 no API key required\n\u2022 Settings page rebuilt with Clay \u2013 all settings now save and sync reliably\n\u2022 Supports all 6 Pebble platforms: aplite, basalt, chalk, diorite, flint, emery\n\nOriginal features:\n\u2022 8 fonts, customizable text alignment, simple/advanced mode\n\u2022 Up to 6 configurable widget slots (normal, sleep, tap, wrist states)\n\u2022 Full color customization for every element\n\u2022 Health: steps, distance, calories, heart rate, sleep tracking\n\u2022 Dual timezone display, cryptocurrency prices (4 pairs)\n\u2022 Bluetooth disconnect alert, 14 language locales, Quick View support",
-  "homepage": "https://github.com/MikkelRH/timeboxed-watchface"
+  "homepage": "https://github.com/mrath/timeboxed2"
 }

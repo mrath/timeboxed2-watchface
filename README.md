@@ -1,7 +1,7 @@
 # Timeboxed 2
 
 > **Fork of [Timeboxed](https://github.com/lfhbento/timeboxed-watchface)** by [Luis Felipe Hussin Bento](https://github.com/lfhbento).  
-> Updated for Pebble SDK 4.44, Pebble Time 2, and the new Pebble app by [Mikkel Rath Hansen](https://github.com/MikkelRH).
+> Updated for Pebble SDK 4.44, Pebble Time 2, and the new Pebble app by [Mikkel Rath Hansen](https://github.com/mrath).
 
 A simple, clean and highly customizable watchface for all Pebble models, including the **Pebble Time 2**.
 
@@ -100,6 +100,13 @@ pebble screenshot --emulator basalt screenshot_basalt.png
 
 1. In the Pebble app: Settings → Developer Mode → note the IP address
 2. `pebble install --phone <IP>`
+
+---
+
+## Contributing
+
+This repo lives at [github.com/mrath/timeboxed2](https://github.com/mrath/timeboxed2) — PRs welcome.  
+Please open an issue before working on large changes.
 
 ---
 
