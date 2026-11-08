@@ -11,7 +11,6 @@ var MODULES = [
     { label: 'Calories',            value: 5  },
     { label: 'Sleep',               value: 6  },
     { label: 'Deep sleep',          value: 7  },
-    { label: 'Wind',                value: 8  },
     { label: 'Feels like',          value: 9  },
     { label: 'Weather + Feels',     value: 10 },
     { label: 'Sunrise',             value: 11 },
@@ -29,17 +28,52 @@ var MODULES = [
     { label: 'Crypto D',            value: 23 }
 ];
 
-function slotSelect(label, messageKey, defaultValue) {
-    return {
-        type: 'select',
-        messageKey: messageKey,
-        label: label,
-        defaultValue: defaultValue,
-        options: MODULES
-    };
+// Sleep, tap and shake slots. -1 is replaced with the Default slot's module
+// before anything is sent to the watch, so 0 stays "None".
+var SAME_AS_DEFAULT = -1;
+var MODULES_WITH_INHERIT = [
+    { label: 'Same as Default', value: SAME_AS_DEFAULT },
+    { label: 'None',            value: 0 }
+].concat(MODULES.slice(1));
+var INHERIT_DEFAULTS = [SAME_AS_DEFAULT, SAME_AS_DEFAULT, SAME_AS_DEFAULT, SAME_AS_DEFAULT, SAME_AS_DEFAULT, SAME_AS_DEFAULT];
+
+var SLOT_NAMES = {
+    A: 'Slot A (top-left)',
+    B: 'Slot B (top-right)',
+    C: 'Slot C (bottom-left)',
+    D: 'Slot D (bottom-right)',
+    E: 'Slot E (above clock)',
+    F: 'Slot F (below clock)'
+};
+
+function slotSelects(prefix, group, defaults) {
+    return 'ABCDEF'.split('').map(function(slot, i) {
+        return {
+            type: 'select',
+            messageKey: 'KEY_' + prefix + 'SLOT' + slot,
+            label: SLOT_NAMES[slot],
+            defaultValue: defaults[i],
+            group: group,
+            options: prefix ? MODULES_WITH_INHERIT : MODULES
+        };
+    });
 }
 
-module.exports = [
+function cryptoItems(suffix) {
+    var group = 'crypto-' + (suffix || 'A');
+    return [
+        { type: 'input',  messageKey: 'KEY_CRYPTOFROM' + suffix,   label: 'From symbol (e.g. BTC)', defaultValue: '',       group: group },
+        { type: 'input',  messageKey: 'KEY_CRYPTOTO' + suffix,     label: 'To symbol (e.g. USD)',   defaultValue: '',       group: group },
+        { type: 'input',  messageKey: 'KEY_CRYPTOMARKET' + suffix, label: 'Market (e.g. CCCAGG)',   defaultValue: 'CCCAGG', group: group },
+        { type: 'toggle', messageKey: 'KEY_CRYPTOMULTI' + suffix,  label: 'Show in Satoshis (×10⁻⁸)', defaultValue: false, group: group }
+    ];
+}
+
+var config = [
+    {
+        type: 'submit',
+        defaultValue: 'Save Settings'
+    },
     // -----------------------------------------------------------------------
     // Font & Layout
     // -----------------------------------------------------------------------
@@ -257,80 +291,73 @@ module.exports = [
                     { label: '30 min', value: 30 },
                     { label: '60 min', value: 60 }
                 ]
-            },
-            {
-                type: 'select',
-                messageKey: 'KEY_SPEEDUNIT',
-                label: 'Wind speed unit',
-                defaultValue: 0,
-                options: [
-                    { label: 'mph',   value: 0 },
-                    { label: 'km/h',  value: 1 },
-                    { label: 'knots', value: 2 }
-                ]
             }
         ]
     },
     // -----------------------------------------------------------------------
-    // Widget Slots (Normal)
+    // Widget Slots
     // -----------------------------------------------------------------------
     {
         type: 'section',
         items: [
-            { type: 'heading', defaultValue: 'Widget Slots (Normal Mode)' },
+            { type: 'heading', defaultValue: 'Widget Slots' },
             { type: 'text', defaultValue: 'Slots A-D form a 2×2 grid around the clock. E is above, F is below.' },
-            slotSelect('Slot A (top-left)',   'KEY_SLOTA', 1),
-            slotSelect('Slot B (top-right)',  'KEY_SLOTB', 2),
-            slotSelect('Slot C (bot-left)',   'KEY_SLOTC', 3),
-            slotSelect('Slot D (bot-right)',  'KEY_SLOTD', 4),
-            slotSelect('Slot E (above clock)', 'KEY_SLOTE', 18),
-            slotSelect('Slot F (below clock)', 'KEY_SLOTF', 17)
+            {
+                type: 'tabs',
+                options: [
+                    { label: 'Default', group: 'slots-normal' },
+                    { label: 'Sleep',  group: 'slots-sleep' },
+                    { label: 'Tap',    group: 'slots-tap' },
+                    { label: 'Shake',  group: 'slots-wrist' }
+                ]
+            }
         ]
-    },
-    // -----------------------------------------------------------------------
-    // Widget Slots (Sleep mode)
-    // -----------------------------------------------------------------------
-    {
-        type: 'section',
-        items: [
-            { type: 'heading', defaultValue: 'Widget Slots (Sleep Mode)' },
-            slotSelect('Sleep Slot A', 'KEY_SLEEPSLOTA', 1),
-            slotSelect('Sleep Slot B', 'KEY_SLEEPSLOTB', 2),
-            slotSelect('Sleep Slot C', 'KEY_SLEEPSLOTC', 6),
-            slotSelect('Sleep Slot D', 'KEY_SLEEPSLOTD', 7),
-            slotSelect('Sleep Slot E', 'KEY_SLEEPSLOTE', 18),
-            slotSelect('Sleep Slot F', 'KEY_SLEEPSLOTF', 17)
-        ]
-    },
-    // -----------------------------------------------------------------------
-    // Widget Slots (Tap mode)
-    // -----------------------------------------------------------------------
-    {
-        type: 'section',
-        items: [
-            { type: 'heading', defaultValue: 'Widget Slots (Tap Mode)' },
-            slotSelect('Tap Slot A', 'KEY_TAPSLOTA', 15),
-            slotSelect('Tap Slot B', 'KEY_TAPSLOTB', 14),
-            slotSelect('Tap Slot C', 'KEY_TAPSLOTC', 5),
-            slotSelect('Tap Slot D', 'KEY_TAPSLOTD', 13),
-            slotSelect('Tap Slot E', 'KEY_TAPSLOTE', 18),
-            slotSelect('Tap Slot F', 'KEY_TAPSLOTF', 17)
-        ]
-    },
-    // -----------------------------------------------------------------------
-    // Widget Slots (Wrist-raise mode)
-    // -----------------------------------------------------------------------
-    {
-        type: 'section',
-        items: [
-            { type: 'heading', defaultValue: 'Widget Slots (Wrist-Raise Mode)' },
-            slotSelect('Wrist Slot A', 'KEY_WRISTSLOTA', 11),
-            slotSelect('Wrist Slot B', 'KEY_WRISTSLOTB', 12),
-            slotSelect('Wrist Slot C', 'KEY_WRISTSLOTC', 8),
-            slotSelect('Wrist Slot D', 'KEY_WRISTSLOTD', 16),
-            slotSelect('Wrist Slot E', 'KEY_WRISTSLOTE', 18),
-            slotSelect('Wrist Slot F', 'KEY_WRISTSLOTF', 17)
-        ]
+        .concat(slotSelects('', 'slots-normal', [1, 2, 3, 4, 18, 17]))
+        .concat([
+            {
+                type: 'toggle',
+                messageKey: 'KEY_SHOWSLEEP',
+                label: 'Enable after wake up mode',
+                description: 'Shows these slots from when you\'re asleep until half an hour after you wake up. Requires Pebble Health.',
+                defaultValue: false,
+                group: 'slots-sleep'
+            }
+        ])
+        .concat(slotSelects('SLEEP', 'slots-sleep', INHERIT_DEFAULTS))
+        .concat([
+            {
+                type: 'toggle',
+                messageKey: 'KEY_SHOWTAP',
+                label: 'Enable tap mode',
+                description: 'Tap the watch screen to show these slots for the time selected below. Light taps might not register.',
+                defaultValue: false,
+                group: 'slots-tap'
+            },
+            {
+                type: 'select',
+                messageKey: 'KEY_TAPTIME',
+                label: 'Tap/shake mode duration',
+                defaultValue: 7,
+                group: 'slots-tap',
+                options: [
+                    { label: '5 s',  value: 5  },
+                    { label: '7 s',  value: 7  },
+                    { label: '10 s', value: 10 }
+                ]
+            }
+        ])
+        .concat(slotSelects('TAP', 'slots-tap', INHERIT_DEFAULTS))
+        .concat([
+            {
+                type: 'toggle',
+                messageKey: 'KEY_SHOWWRIST',
+                label: 'Enable wrist shake mode',
+                description: 'Shake your wrist to show these slots for the tap/shake duration (set in the Tap tab).',
+                defaultValue: false,
+                group: 'slots-wrist'
+            }
+        ])
+        .concat(slotSelects('WRIST', 'slots-wrist', INHERIT_DEFAULTS))
     },
     // -----------------------------------------------------------------------
     // Notifications & Alerts
@@ -368,12 +395,6 @@ module.exports = [
             { type: 'heading', defaultValue: 'Health' },
             {
                 type: 'toggle',
-                messageKey: 'KEY_SHOWSLEEP',
-                label: 'Enable after wake up mode',
-                defaultValue: false
-            },
-            {
-                type: 'toggle',
                 messageKey: 'KEY_USEKM',
                 label: 'Use kilometers for distance',
                 defaultValue: false
@@ -397,38 +418,6 @@ module.exports = [
                 label: 'Heart rate high threshold',
                 defaultValue: '0',
                 attributes: { type: 'number', min: 0, max: 300 }
-            }
-        ]
-    },
-    // -----------------------------------------------------------------------
-    // Tap & Wrist-Raise
-    // -----------------------------------------------------------------------
-    {
-        type: 'section',
-        items: [
-            { type: 'heading', defaultValue: 'Tap & Wrist-Raise' },
-            {
-                type: 'toggle',
-                messageKey: 'KEY_SHOWTAP',
-                label: 'Enable tap mode',
-                defaultValue: false
-            },
-            {
-                type: 'select',
-                messageKey: 'KEY_TAPTIME',
-                label: 'Tap mode duration (seconds)',
-                defaultValue: 7,
-                options: [
-                    { label: '5 s',  value: 5  },
-                    { label: '7 s',  value: 7  },
-                    { label: '10 s', value: 10 }
-                ]
-            },
-            {
-                type: 'toggle',
-                messageKey: 'KEY_SHOWWRIST',
-                label: 'Enable wrist shake mode',
-                defaultValue: false
             }
         ]
     },
@@ -459,8 +448,6 @@ module.exports = [
             { type: 'color', messageKey: 'KEY_WEATHERCOLOR',      label: 'Weather icon',        defaultValue: '0xFFFFFF' },
             { type: 'color', messageKey: 'KEY_MINCOLOR',          label: 'Min temperature',     defaultValue: '0xFFFFFF' },
             { type: 'color', messageKey: 'KEY_MAXCOLOR',          label: 'Max temperature',     defaultValue: '0xFFFFFF' },
-            { type: 'color', messageKey: 'KEY_WINDDIRCOLOR',      label: 'Wind direction',      defaultValue: '0xFFFFFF' },
-            { type: 'color', messageKey: 'KEY_WINDSPEEDCOLOR',    label: 'Wind speed',          defaultValue: '0xFFFFFF' },
             { type: 'color', messageKey: 'KEY_COMPASSCOLOR',      label: 'Compass',             defaultValue: '0xFFFFFF' },
             { type: 'color', messageKey: 'KEY_SUNRISECOLOR',      label: 'Sunrise',             defaultValue: '0xFFFF00' },
             { type: 'color', messageKey: 'KEY_SUNSETCOLOR',       label: 'Sunset',              defaultValue: '0xFF8000' },
@@ -495,21 +482,27 @@ module.exports = [
         ]
     },
     // -----------------------------------------------------------------------
-    // Cryptocurrency A
+    // Cryptocurrency
     // -----------------------------------------------------------------------
     {
         type: 'section',
         items: [
-            { type: 'heading', defaultValue: 'Cryptocurrency A' },
-            { type: 'input', messageKey: 'KEY_CRYPTOFROM',   label: 'From symbol (e.g. BTC)',   defaultValue: '' },
-            { type: 'input', messageKey: 'KEY_CRYPTOTO',     label: 'To symbol (e.g. USD)',     defaultValue: '' },
-            { type: 'input', messageKey: 'KEY_CRYPTOMARKET', label: 'Market (e.g. CCCAGG)',     defaultValue: 'CCCAGG' },
+            { type: 'heading', defaultValue: 'Cryptocurrency' },
             {
-                type: 'toggle',
-                messageKey: 'KEY_CRYPTOMULTI',
-                label: 'Show in Satoshis (×10⁻⁸)',
-                defaultValue: false
-            },
+                type: 'tabs',
+                options: [
+                    { label: 'A', group: 'crypto-A' },
+                    { label: 'B', group: 'crypto-B' },
+                    { label: 'C', group: 'crypto-C' },
+                    { label: 'D', group: 'crypto-D' }
+                ]
+            }
+        ]
+        .concat(cryptoItems(''))
+        .concat(cryptoItems('B'))
+        .concat(cryptoItems('C'))
+        .concat(cryptoItems('D'))
+        .concat([
             {
                 type: 'select',
                 messageKey: 'KEY_CRYPTOTIME',
@@ -522,61 +515,7 @@ module.exports = [
                     { label: '60 min', value: 60 }
                 ]
             }
-        ]
-    },
-    // -----------------------------------------------------------------------
-    // Cryptocurrency B
-    // -----------------------------------------------------------------------
-    {
-        type: 'section',
-        items: [
-            { type: 'heading', defaultValue: 'Cryptocurrency B' },
-            { type: 'input', messageKey: 'KEY_CRYPTOFROMB',   label: 'From symbol', defaultValue: '' },
-            { type: 'input', messageKey: 'KEY_CRYPTOTOB',     label: 'To symbol',   defaultValue: '' },
-            { type: 'input', messageKey: 'KEY_CRYPTOMARKETB', label: 'Market',      defaultValue: 'CCCAGG' },
-            {
-                type: 'toggle',
-                messageKey: 'KEY_CRYPTOMULTIB',
-                label: 'Show in Satoshis',
-                defaultValue: false
-            }
-        ]
-    },
-    // -----------------------------------------------------------------------
-    // Cryptocurrency C
-    // -----------------------------------------------------------------------
-    {
-        type: 'section',
-        items: [
-            { type: 'heading', defaultValue: 'Cryptocurrency C' },
-            { type: 'input', messageKey: 'KEY_CRYPTOFROMC',   label: 'From symbol', defaultValue: '' },
-            { type: 'input', messageKey: 'KEY_CRYPTOTOC',     label: 'To symbol',   defaultValue: '' },
-            { type: 'input', messageKey: 'KEY_CRYPTOMARKETC', label: 'Market',      defaultValue: 'CCCAGG' },
-            {
-                type: 'toggle',
-                messageKey: 'KEY_CRYPTOMULTIC',
-                label: 'Show in Satoshis',
-                defaultValue: false
-            }
-        ]
-    },
-    // -----------------------------------------------------------------------
-    // Cryptocurrency D
-    // -----------------------------------------------------------------------
-    {
-        type: 'section',
-        items: [
-            { type: 'heading', defaultValue: 'Cryptocurrency D' },
-            { type: 'input', messageKey: 'KEY_CRYPTOFROMD',   label: 'From symbol', defaultValue: '' },
-            { type: 'input', messageKey: 'KEY_CRYPTOTOD',     label: 'To symbol',   defaultValue: '' },
-            { type: 'input', messageKey: 'KEY_CRYPTOMARKETD', label: 'Market',      defaultValue: 'CCCAGG' },
-            {
-                type: 'toggle',
-                messageKey: 'KEY_CRYPTOMULTID',
-                label: 'Show in Satoshis',
-                defaultValue: false
-            }
-        ]
+        ])
     },
     // -----------------------------------------------------------------------
     // Submit
@@ -586,3 +525,6 @@ module.exports = [
         defaultValue: 'Save Settings'
     }
 ];
+
+module.exports = config;
+module.exports.SAME_AS_DEFAULT = SAME_AS_DEFAULT;

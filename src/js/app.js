@@ -7,7 +7,9 @@
 // ---------------------------------------------------------------------------
 var Clay = require('@rebble/clay');
 var clayConfig = require('./config');
+var SAME_AS_DEFAULT = clayConfig.SAME_AS_DEFAULT;
 var clay = new Clay(clayConfig, null, { autoHandleEvents: false });
+clay.registerComponent(require('./tabs'));
 var messageKeys = require('message_keys');
 
 // The watch reads these as C strings; every other setting must be an integer.
@@ -66,7 +68,17 @@ function buildWatchDict(settings) {
         if (isAplite && /WRIST|TAP|SLEEP|HEART|DEEP|ACTIVE|_CAL|STEPS|DIST|ALTHOURSBCOLOR|CRYPTO[BCD]COLOR/.test(key)) {
             return;
         }
-        dict[key] = toWatchValue(key, settings[key]);
+        var value = toWatchValue(key, settings[key]);
+        var alternate = /^KEY_(SLEEP|TAP|WRIST)SLOT([A-F])$/.exec(key);
+        if (alternate && value === SAME_AS_DEFAULT) {
+            var normalKey = 'KEY_SLOT' + alternate[2];
+            value = settings[normalKey] === undefined ? 0 : toWatchValue(normalKey, settings[normalKey]);
+        }
+        // The weather plugin has no wind, so a saved Wind slot is cleared.
+        if (/SLOT[A-F]$/.test(key) && value === 8) {
+            value = 0;
+        }
+        dict[key] = value;
     });
     return dict;
 }
@@ -111,6 +123,63 @@ var PLUGIN_ICON_MAP = {
     'unknown':       0
 };
 
+var NIGHT_ICON_MAP = {
+    1: 20,
+    3: 22
+};
+
+// ---------------------------------------------------------------------------
+// Sunrise/sunset from the phone's position (the weather plugin has neither)
+// ---------------------------------------------------------------------------
+var sunTimes = null;
+
+// Sunrise equation, see https://en.wikipedia.org/wiki/Sunrise_equation.
+// Returns unix seconds, or null during polar day/night.
+function computeSunTimes(lat, lon, date) {
+    var rad = Math.PI / 180;
+    var julianDate = date.getTime() / 86400000 + 2440587.5;
+    // Solar noon nearest to now, i.e. today's in local solar time.
+    var n = Math.round(julianDate - 2451545.0 + lon / 360);
+    var meanSolarTime = n - lon / 360;
+    var anomaly = (357.5291 + 0.98560028 * meanSolarTime) % 360;
+    var center = 1.9148 * Math.sin(anomaly * rad) +
+        0.0200 * Math.sin(2 * anomaly * rad) +
+        0.0003 * Math.sin(3 * anomaly * rad);
+    var longitude = (anomaly + center + 180 + 102.9372) % 360;
+    var transit = 2451545.0 + meanSolarTime +
+        0.0053 * Math.sin(anomaly * rad) - 0.0069 * Math.sin(2 * longitude * rad);
+    var sinDeclination = Math.sin(longitude * rad) * Math.sin(23.4397 * rad);
+    var cosDeclination = Math.cos(Math.asin(sinDeclination));
+    var cosHourAngle = (Math.sin(-0.833 * rad) - Math.sin(lat * rad) * sinDeclination) /
+        (Math.cos(lat * rad) * cosDeclination);
+    if (cosHourAngle < -1 || cosHourAngle > 1) {
+        return null;
+    }
+    var hourAngle = Math.acos(cosHourAngle) / rad;
+    function toUnix(julian) {
+        return Math.round((julian - 2440587.5) * 86400);
+    }
+    return {
+        sunrise: toUnix(transit - hourAngle / 360),
+        sunset: toUnix(transit + hourAngle / 360)
+    };
+}
+
+function updateSunTimes(callback) {
+    if (!navigator.geolocation) {
+        callback();
+        return;
+    }
+    navigator.geolocation.getCurrentPosition(function(pos) {
+        sunTimes = computeSunTimes(pos.coords.latitude, pos.coords.longitude, new Date());
+        console.log('Sun times: ' + JSON.stringify(sunTimes));
+        callback();
+    }, function(err) {
+        console.log('Location error: ' + err.message);
+        callback();
+    }, { timeout: 15000, maximumAge: 3600000 });
+}
+
 // ---------------------------------------------------------------------------
 // Weather via the Pebble app's built-in weather plugin
 // ---------------------------------------------------------------------------
@@ -136,7 +205,8 @@ function toUserTemp(prop, fallback) {
     return Math.round(value);
 }
 
-function toUserSpeed(prop) {
+// The watch converts from mph to the selected unit itself.
+function toMph(prop) {
     var nv = numeric(prop);
     if (!nv) {
         return 0;
@@ -150,13 +220,6 @@ function toUserSpeed(prop) {
     } else if (unit === 'knots' || unit === 'kn') {
         ms = nv.value / 1.944;
     }
-    var speedUnit = toWatchValue('KEY_SPEEDUNIT', setting('KEY_SPEEDUNIT', 0));
-    if (speedUnit === 1) {
-        return Math.round(ms * 3.6);
-    }
-    if (speedUnit === 2) {
-        return Math.round(ms * 1.944);
-    }
     return Math.round(ms * 2.237);
 }
 
@@ -169,11 +232,7 @@ function subscribeToWeather() {
             'high',
             'low',
             'condition_code',
-            'feels_like',
-            'wind_speed',
-            'wind_direction',
-            'sunrise',
-            'sunset'
+            'feels_like'
         ],
         onData: function(update) {
             var here = update.instances[0];
@@ -183,7 +242,7 @@ function subscribeToWeather() {
             }
 
             latestWeather = here.properties;
-            sendWeather();
+            updateSunTimes(sendWeather);
         },
         onError: function(err) {
             console.log('Weather plugin error: ' + err.code + ' ' + err.message);
@@ -200,19 +259,25 @@ function sendWeather() {
     }
     var p = latestWeather;
     var temp = toUserTemp(p.temperature, 0);
-    var condCode = p.condition_code && p.condition_code.shortText
-        ? p.condition_code.shortText.text : 'unknown';
+    var condText = p.condition_code &&
+        (p.condition_code.longText || p.condition_code.shortText);
+    var condCode = condText ? condText.text : 'unknown';
+    var icon = PLUGIN_ICON_MAP[condCode] !== undefined ? PLUGIN_ICON_MAP[condCode] : 0;
+    var now = Date.now() / 1000;
+    if (sunTimes && (now < sunTimes.sunrise || now > sunTimes.sunset) && NIGHT_ICON_MAP[icon]) {
+        icon = NIGHT_ICON_MAP[icon];
+    }
     var direction = numeric(p.wind_direction);
     var data = {
         KEY_TEMP:      temp,
         KEY_MAX:       toUserTemp(p.high, temp),
         KEY_MIN:       toUserTemp(p.low, temp),
-        KEY_WEATHER:   PLUGIN_ICON_MAP[condCode] !== undefined ? PLUGIN_ICON_MAP[condCode] : 0,
+        KEY_WEATHER:   icon,
         KEY_FEELS:     toUserTemp(p.feels_like, temp),
-        KEY_SPEED:     toUserSpeed(p.wind_speed),
+        KEY_SPEED:     toMph(p.wind_speed),
         KEY_DIRECTION: direction ? Math.round(direction.value) : 0,
-        KEY_SUNRISE:   p.sunrise && p.sunrise.timestamp ? Math.round(p.sunrise.timestamp.value) : 0,
-        KEY_SUNSET:    p.sunset && p.sunset.timestamp ? Math.round(p.sunset.timestamp.value) : 0
+        KEY_SUNRISE:   sunTimes ? sunTimes.sunrise : 0,
+        KEY_SUNSET:    sunTimes ? sunTimes.sunset : 0
     };
     console.log('Sending weather: ' + JSON.stringify(data));
     Pebble.sendAppMessage(

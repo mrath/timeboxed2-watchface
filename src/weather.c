@@ -255,6 +255,9 @@ void update_wind_values(int speed, int direction) {
         } else if (get_wind_speed_unit() == UNIT_KNOTS) {
             speed = (speed * 0.868976)/1;
             wind_unit = "*";
+        } else if (get_wind_speed_unit() == UNIT_MS) {
+            speed = (speed * 0.44704)/1;
+            wind_unit = "m/s";
         } else {
             wind_unit = "(";
         }

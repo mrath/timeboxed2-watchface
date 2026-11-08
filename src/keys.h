@@ -271,6 +271,7 @@
 #define UNIT_MPH 0
 #define UNIT_KPH 1
 #define UNIT_KNOTS 2
+#define UNIT_MS 3
 
 #define RELOAD_DEFAULT 0
 #define RELOAD_CONFIGS 1

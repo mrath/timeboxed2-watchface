@@ -106,7 +106,7 @@ static char min_icon_text[4];
 static char weather_text[4];
 static char direction_text[4];
 static char speed_text[8];
-static char wind_unit_text[2];
+static char wind_unit_text[4];
 static char sunrise_text[8];
 static char sunrise_icon_text[4];
 static char sunset_text[8];
@@ -321,7 +321,8 @@ void create_text_layers(Window* window) {
         text_layer_set_text_alignment(direction, GTextAlignmentLeft);
 
         pos = get_pos_for_item(slot, WIND_UNIT_ITEM, mode, selected_font, width, height);
-        wind_unit = text_layer_create(GRect(pos.x, pos.y, width, 50));
+        int unit_y = pos.y + (get_wind_speed_unit() == UNIT_MS ? (PBL_DISPLAY_WIDTH >= 200 ? 4 : 3) : 0);
+        wind_unit = text_layer_create(GRect(pos.x, unit_y, width, 50));
         text_layer_set_background_color(wind_unit, GColorClear);
         text_layer_set_text_alignment(wind_unit, GTextAlignmentLeft);
     }
@@ -680,7 +681,10 @@ void set_face_fonts() {
     set_text_font(temp_max, base_font);
     set_text_font(speed, base_font);
     set_text_font(direction, custom_font);
-    set_text_font(wind_unit, custom_font);
+    // The icon font has no m/s glyph, so that unit is drawn as text.
+    set_text_font(wind_unit, get_wind_speed_unit() == UNIT_MS ?
+            fonts_get_system_font(PBL_DISPLAY_WIDTH >= 200 ? FONT_KEY_GOTHIC_18_BOLD : FONT_KEY_GOTHIC_14_BOLD) :
+            custom_font);
     set_text_font(sunrise, base_font);
     set_text_font(sunrise_icon, weather_font_small);
     set_text_font(sunset, base_font);

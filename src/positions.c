@@ -10,8 +10,10 @@ GPoint create_point(int x, int y) {
     return point;
 }
 
-// Layout values are tuned for basalt (144x168) and chalk (180x180).
-// emery (200x228) is ~7/5 of basalt, gabbro (260x260) is 13/9 of chalk.
+// Layout values are tuned for the 144x168 rectangular watches (basalt,
+// diorite, and flint, the Core 2 Duo, which is the same size as Pebble 2)
+// and chalk (180x180). emery (200x228) is ~7/5 of that rectangle,
+// gabbro (260x260) is 13/9 of chalk.
 #if defined(PBL_PLATFORM_EMERY)
 #define SCALE(v) ((v) * 7 / 5)
 #elif defined(PBL_PLATFORM_GABBRO)
@@ -300,15 +302,15 @@ static GPoint get_temp_positions(int mode, int font, int width, int height) {
                 case SYSTEM_FONT:
                 case ARCHIVO_FONT:
                 case DIN_FONT:
-                    return create_point(PBL_IF_ROUND_ELSE(SCALE(16), 38), 3);
+                    return create_point(PBL_IF_ROUND_ELSE(SCALE(16), SCALE(38)), 3);
                 case PROTOTYPE_FONT:
-                    return create_point(PBL_IF_ROUND_ELSE(SCALE(18), 40), 3);
+                    return create_point(PBL_IF_ROUND_ELSE(SCALE(18), SCALE(40)), 3);
                 case BLOCKO_BIG_FONT:
-                    return create_point(PBL_IF_ROUND_ELSE(SCALE(16), 38), 3);
+                    return create_point(PBL_IF_ROUND_ELSE(SCALE(16), SCALE(38)), 3);
                 case LECO_FONT:
-                    return create_point(PBL_IF_ROUND_ELSE(SCALE(15), 39), 5);
+                    return create_point(PBL_IF_ROUND_ELSE(SCALE(15), SCALE(39)), 5);
                 case KONSTRUCT_FONT:
-                    return create_point(PBL_IF_ROUND_ELSE(SCALE(15), 39), 9);
+                    return create_point(PBL_IF_ROUND_ELSE(SCALE(15), SCALE(39)), 9);
             }
             break;
         default:
@@ -328,13 +330,13 @@ static GPoint get_tempmin_positions(int mode, int font, int width, int height) {
                 case ARCHIVO_FONT:
                 case DIN_FONT:
                 case PROTOTYPE_FONT:
-                    return create_point(PBL_IF_ROUND_ELSE(SCALE(70), 12), 3);
+                    return create_point(PBL_IF_ROUND_ELSE(SCALE(70), SCALE(12)), 3);
                 case BLOCKO_BIG_FONT:
-                    return create_point(PBL_IF_ROUND_ELSE(SCALE(70), 12), 3);
+                    return create_point(PBL_IF_ROUND_ELSE(SCALE(70), SCALE(12)), 3);
                 case LECO_FONT:
-                    return create_point(PBL_IF_ROUND_ELSE(SCALE(68), 10), 5);
+                    return create_point(PBL_IF_ROUND_ELSE(SCALE(68), SCALE(10)), 5);
                 case KONSTRUCT_FONT:
-                    return create_point(PBL_IF_ROUND_ELSE(SCALE(68), 10), 9);
+                    return create_point(PBL_IF_ROUND_ELSE(SCALE(68), SCALE(10)), 9);
             }
             break;
         default:
@@ -353,15 +355,15 @@ static GPoint get_tempminicon_positions(int mode, int font, int width, int heigh
                 case SYSTEM_FONT:
                 case ARCHIVO_FONT:
                 case PROTOTYPE_FONT:
-                    return create_point(PBL_IF_ROUND_ELSE(SCALE(60), 2), 4);
+                    return create_point(PBL_IF_ROUND_ELSE(SCALE(60), SCALE(2)), 4);
                 case DIN_FONT:
-                    return create_point(PBL_IF_ROUND_ELSE(SCALE(60), 2), 4);
+                    return create_point(PBL_IF_ROUND_ELSE(SCALE(60), SCALE(2)), 4);
                 case BLOCKO_BIG_FONT:
-                    return create_point(PBL_IF_ROUND_ELSE(SCALE(60), 2), 4);
+                    return create_point(PBL_IF_ROUND_ELSE(SCALE(60), SCALE(2)), 4);
                 case LECO_FONT:
-                    return create_point(PBL_IF_ROUND_ELSE(SCALE(59), 1), 3);
+                    return create_point(PBL_IF_ROUND_ELSE(SCALE(59), SCALE(1)), 3);
                 case KONSTRUCT_FONT:
-                    return create_point(PBL_IF_ROUND_ELSE(SCALE(59), 1), 5);
+                    return create_point(PBL_IF_ROUND_ELSE(SCALE(59), SCALE(1)), 5);
             }
             break;
         default:
@@ -381,13 +383,13 @@ static GPoint get_tempmax_positions(int mode, int font, int width, int height) {
                 case ARCHIVO_FONT:
                 case DIN_FONT:
                 case PROTOTYPE_FONT:
-                    return create_point(PBL_IF_ROUND_ELSE(SCALE(108), 45), 3);
+                    return create_point(PBL_IF_ROUND_ELSE(SCALE(108), SCALE(45)), 3);
                 case BLOCKO_BIG_FONT:
-                    return create_point(PBL_IF_ROUND_ELSE(SCALE(108), 45), 3);
+                    return create_point(PBL_IF_ROUND_ELSE(SCALE(108), SCALE(45)), 3);
                 case LECO_FONT:
-                    return create_point(PBL_IF_ROUND_ELSE(SCALE(108), 45), 5);
+                    return create_point(PBL_IF_ROUND_ELSE(SCALE(108), SCALE(45)), 5);
                 case KONSTRUCT_FONT:
-                    return create_point(PBL_IF_ROUND_ELSE(SCALE(108), 45), 9);
+                    return create_point(PBL_IF_ROUND_ELSE(SCALE(108), SCALE(45)), 9);
             }
             break;
         default:
@@ -406,15 +408,15 @@ static GPoint get_tempmaxicon_positions(int mode, int font, int width, int heigh
                 case SYSTEM_FONT:
                 case ARCHIVO_FONT:
                 case PROTOTYPE_FONT:
-                    return create_point(PBL_IF_ROUND_ELSE(SCALE(98), 35), 4);
+                    return create_point(PBL_IF_ROUND_ELSE(SCALE(98), SCALE(35)), 4);
                 case DIN_FONT:
-                    return create_point(PBL_IF_ROUND_ELSE(SCALE(98), 35), 4);
+                    return create_point(PBL_IF_ROUND_ELSE(SCALE(98), SCALE(35)), 4);
                 case BLOCKO_BIG_FONT:
-                    return create_point(PBL_IF_ROUND_ELSE(SCALE(98), 35), 4);
+                    return create_point(PBL_IF_ROUND_ELSE(SCALE(98), SCALE(35)), 4);
                 case LECO_FONT:
-                    return create_point(PBL_IF_ROUND_ELSE(SCALE(99), 36), 3);
+                    return create_point(PBL_IF_ROUND_ELSE(SCALE(99), SCALE(36)), 3);
                 case KONSTRUCT_FONT:
-                    return create_point(PBL_IF_ROUND_ELSE(SCALE(99), 36), 5);
+                    return create_point(PBL_IF_ROUND_ELSE(SCALE(99), SCALE(36)), 5);
             }
             break;
         default:
@@ -427,7 +429,7 @@ static GPoint get_tempmaxicon_positions(int mode, int font, int width, int heigh
 #if defined(PBL_HEALTH)
 static GPoint get_heart_positions(int mode, int font, int width, int height) {
     // heart
-    int x_pos = PBL_IF_ROUND_ELSE(SCALE(96), 38);
+    int x_pos = PBL_IF_ROUND_ELSE(SCALE(96), SCALE(38));
     switch (mode) {
         case MODE_NORMAL:
             switch(font) {
@@ -454,7 +456,7 @@ static GPoint get_heart_positions(int mode, int font, int width, int height) {
 
 static GPoint get_heart_icon_positions(int mode, int font, int width, int height) {
     // heart icon
-    int x_pos = PBL_IF_ROUND_ELSE(SCALE(64), 8);
+    int x_pos = PBL_IF_ROUND_ELSE(SCALE(64), SCALE(8));
     switch (mode) {
         case MODE_NORMAL:
             switch(font) {
@@ -486,7 +488,7 @@ static GPoint get_heart_icon_positions(int mode, int font, int width, int height
 
 static GPoint get_speed_positions(int mode, int font, int width, int height) {
     // wind speed
-    int x_pos = PBL_IF_ROUND_ELSE(SCALE(56), 6);
+    int x_pos = PBL_IF_ROUND_ELSE(SCALE(56), SCALE(6));
     switch (mode) {
         case MODE_NORMAL:
             switch(font) {
@@ -513,7 +515,7 @@ static GPoint get_speed_positions(int mode, int font, int width, int height) {
 
 static GPoint get_direction_positions(int mode, int font, int width, int height) {
     // wind direction
-    int x_pos = PBL_IF_ROUND_ELSE(SCALE(56), 4);
+    int x_pos = PBL_IF_ROUND_ELSE(SCALE(56), SCALE(4));
     switch (mode) {
         case MODE_NORMAL:
             switch(font) {
@@ -539,7 +541,7 @@ static GPoint get_direction_positions(int mode, int font, int width, int height)
 
 static GPoint get_wind_unit_positions(int mode, int font, int width, int height) {
     // wind unit
-    int x_pos = PBL_IF_ROUND_ELSE(SCALE(100), 48);
+    int x_pos = PBL_IF_ROUND_ELSE(SCALE(100), SCALE(48));
     switch (mode) {
         case MODE_NORMAL:
             switch(font) {
@@ -570,7 +572,7 @@ static GPoint get_wind_unit_positions(int mode, int font, int width, int height)
 
 static GPoint get_sunrise_positions(int mode, int font, int width, int height) {
     // sunrise
-    int x_pos = PBL_IF_ROUND_ELSE(SCALE(86), 22);
+    int x_pos = PBL_IF_ROUND_ELSE(SCALE(86), SCALE(22));
     switch (mode) {
         case MODE_NORMAL:
             switch(font) {
@@ -628,7 +630,7 @@ static GPoint get_sunrise_icon_positions(int mode, int font, int width, int heig
 
 static GPoint get_sunset_positions(int mode, int font, int width, int height) {
     // sunset
-    int x_pos = PBL_IF_ROUND_ELSE(SCALE(-86), -24);
+    int x_pos = PBL_IF_ROUND_ELSE(SCALE(-86), SCALE(-24));
     switch (mode) {
         case MODE_NORMAL:
             switch(font) {
@@ -655,7 +657,7 @@ static GPoint get_sunset_positions(int mode, int font, int width, int height) {
 
 static GPoint get_sunset_icon_positions(int mode, int font, int width, int height) {
     // sunset icon
-    int x_pos = PBL_IF_ROUND_ELSE(SCALE(-60), -4);
+    int x_pos = PBL_IF_ROUND_ELSE(SCALE(-60), SCALE(-4));
     switch (mode) {
         case MODE_NORMAL:
             switch(font) {
@@ -686,7 +688,7 @@ static GPoint get_sunset_icon_positions(int mode, int font, int width, int heigh
 
 static GPoint get_degrees_positions(int mode, int font, int width, int height) {
     // compass degrees
-    int x_pos = PBL_IF_ROUND_ELSE(SCALE(82), 30);
+    int x_pos = PBL_IF_ROUND_ELSE(SCALE(82), SCALE(30));
     switch (mode) {
         case MODE_NORMAL:
             switch(font) {
@@ -713,7 +715,7 @@ static GPoint get_degrees_positions(int mode, int font, int width, int height) {
 
 static GPoint get_compass_positions(int mode, int font, int width, int height) {
     // compass arrow
-    int x_pos = PBL_IF_ROUND_ELSE(SCALE(60), 8);
+    int x_pos = PBL_IF_ROUND_ELSE(SCALE(60), SCALE(8));
     switch (mode) {
         case MODE_NORMAL:
             switch(font) {
