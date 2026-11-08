@@ -18,6 +18,7 @@ GPoint create_point(int x, int y) {
 #define EMERY_Y(v) (v)
 #endif
 
+
 #ifndef PBL_ROUND
 // Pebble Time 2 (emery/flint) has a 200×228 screen (~1.4× basalt).
 // Scale module_height proportionally so bottom slots don't overlap the clock.
