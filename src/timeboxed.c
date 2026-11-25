@@ -176,7 +176,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     if (key_value) {
         char* tz_code = key_value->value->cstring;
         persist_write_string(KEY_TIMEZONESCODE, tz_code);
-        strcpy(tz_name, tz_code);
+        strncpy(tz_name, tz_code, sizeof(tz_name) - 1);
     }
 
     #if !defined PBL_PLATFORM_APLITE
@@ -197,7 +197,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     if (key_value) {
         char* tz_code = key_value->value->cstring;
         persist_write_string(KEY_TIMEZONESBCODE, tz_code);
-        strcpy(tz_name_b, tz_code);
+        strncpy(tz_name_b, tz_code, sizeof(tz_name_b) - 1);
     }
     #endif
 

@@ -22,10 +22,10 @@ var MODULES = [
     { label: 'Battery',             value: 17 },
     { label: 'Timezone A',          value: 18 },
     { label: 'Timezone B',          value: 19 },
-    { label: 'Crypto A',            value: 20 },
-    { label: 'Crypto B',            value: 21 },
-    { label: 'Crypto C',            value: 22 },
-    { label: 'Crypto D',            value: 23 }
+    { label: 'Ticker A',            value: 20 },
+    { label: 'Ticker B',            value: 21 },
+    { label: 'Ticker C',            value: 22 },
+    { label: 'Ticker D',            value: 23 }
 ];
 
 // Sleep, tap and shake slots. -1 is replaced with the Default slot's module
@@ -59,13 +59,43 @@ function slotSelects(prefix, group, defaults) {
     });
 }
 
-function cryptoItems(suffix) {
-    var group = 'crypto-' + (suffix || 'A');
+function tickerItems(suffix) {
+    var group = 'ticker-' + (suffix || 'A');
     return [
-        { type: 'input',  messageKey: 'KEY_CRYPTOFROM' + suffix,   label: 'From symbol (e.g. BTC)', defaultValue: '',       group: group },
-        { type: 'input',  messageKey: 'KEY_CRYPTOTO' + suffix,     label: 'To symbol (e.g. USD)',   defaultValue: '',       group: group },
-        { type: 'input',  messageKey: 'KEY_CRYPTOMARKET' + suffix, label: 'Market (e.g. CCCAGG)',   defaultValue: 'CCCAGG', group: group },
-        { type: 'toggle', messageKey: 'KEY_CRYPTOMULTI' + suffix,  label: 'Show in Satoshis (×10⁻⁸)', defaultValue: false, group: group }
+        {
+            type: 'input',
+            messageKey: 'KEY_TICKER' + suffix,
+            label: 'Symbol',
+            defaultValue: '',
+            group: group,
+            attributes: { placeholder: 'e.g. AAPL or BTC-USD', autocapitalize: 'characters', autocorrect: 'off', spellcheck: false }
+        },
+        {
+            type: 'select',
+            messageKey: 'KEY_TICKERSHOW' + suffix,
+            label: 'Show',
+            defaultValue: 0,
+            group: group,
+            options: [
+                { label: 'Price',            value: 0 },
+                { label: 'Daily change (%)', value: 1 }
+            ]
+        },
+        {
+            type: 'select',
+            messageKey: 'KEY_TICKERDECIMALS' + suffix,
+            label: 'Decimals',
+            defaultValue: -1,
+            group: group,
+            options: [
+                { label: 'Auto', value: -1 },
+                { label: '0',    value: 0  },
+                { label: '1',    value: 1  },
+                { label: '2',    value: 2  },
+                { label: '3',    value: 3  },
+                { label: '4',    value: 4  }
+            ]
+        }
     ];
 }
 
@@ -195,7 +225,8 @@ var config = [
                 type: 'input',
                 messageKey: 'KEY_TIMEZONESCODE',
                 label: 'Label (e.g. UTC)',
-                defaultValue: ''
+                defaultValue: '',
+                attributes: { maxlength: 5 }
             },
             {
                 type: 'select',
@@ -235,7 +266,8 @@ var config = [
                 type: 'input',
                 messageKey: 'KEY_TIMEZONESBCODE',
                 label: 'Label (e.g. EST)',
-                defaultValue: ''
+                defaultValue: '',
+                attributes: { maxlength: 5 }
             },
             {
                 type: 'select',
@@ -452,10 +484,10 @@ var config = [
             { type: 'color', messageKey: 'KEY_SUNRISECOLOR',      label: 'Sunrise',             defaultValue: '0xFFFF00' },
             { type: 'color', messageKey: 'KEY_SUNSETCOLOR',       label: 'Sunset',              defaultValue: '0xFF8000' },
             { type: 'color', messageKey: 'KEY_SECONDSCOLOR',      label: 'Seconds',             defaultValue: '0xFFFFFF' },
-            { type: 'color', messageKey: 'KEY_CRYPTOCOLOR',       label: 'Crypto A',            defaultValue: '0xFFFFFF' },
-            { type: 'color', messageKey: 'KEY_CRYPTOBCOLOR',      label: 'Crypto B',            defaultValue: '0xFFFFFF' },
-            { type: 'color', messageKey: 'KEY_CRYPTOCCOLOR',      label: 'Crypto C',            defaultValue: '0xFFFFFF' },
-            { type: 'color', messageKey: 'KEY_CRYPTODCOLOR',      label: 'Crypto D',            defaultValue: '0xFFFFFF' }
+            { type: 'color', messageKey: 'KEY_CRYPTOCOLOR',       label: 'Ticker A',            defaultValue: '0xFFFFFF' },
+            { type: 'color', messageKey: 'KEY_CRYPTOBCOLOR',      label: 'Ticker B',            defaultValue: '0xFFFFFF' },
+            { type: 'color', messageKey: 'KEY_CRYPTOCCOLOR',      label: 'Ticker C',            defaultValue: '0xFFFFFF' },
+            { type: 'color', messageKey: 'KEY_CRYPTODCOLOR',      label: 'Ticker D',            defaultValue: '0xFFFFFF' }
         ]
     },
     // -----------------------------------------------------------------------
@@ -482,31 +514,38 @@ var config = [
         ]
     },
     // -----------------------------------------------------------------------
-    // Cryptocurrency
+    // Stocks & Crypto
     // -----------------------------------------------------------------------
     {
         type: 'section',
         items: [
-            { type: 'heading', defaultValue: 'Cryptocurrency' },
+            { type: 'heading', defaultValue: 'Stocks & Crypto' },
+            {
+                type: 'text',
+                defaultValue: 'Add a Ticker A-D module to a widget slot to show it. Symbols use Yahoo Finance format, for example ' +
+                    'AAPL, NOVO-B.CO (Copenhagen), SPY (ETF), ^GSPC (S&amp;P 500), BTC-USD, ETH-EUR or EURUSD=X (FX). ' +
+                    'Look up symbols on finance.yahoo.com. The watch shows up to 7 characters; large values are shortened with k/M/B. ' +
+                    'To price a coin in bitcoin (the old Satoshi option), use a pair like ETH-BTC with Auto decimals.'
+            },
             {
                 type: 'tabs',
                 options: [
-                    { label: 'A', group: 'crypto-A' },
-                    { label: 'B', group: 'crypto-B' },
-                    { label: 'C', group: 'crypto-C' },
-                    { label: 'D', group: 'crypto-D' }
+                    { label: 'A', group: 'ticker-A' },
+                    { label: 'B', group: 'ticker-B' },
+                    { label: 'C', group: 'ticker-C' },
+                    { label: 'D', group: 'ticker-D' }
                 ]
             }
         ]
-        .concat(cryptoItems(''))
-        .concat(cryptoItems('B'))
-        .concat(cryptoItems('C'))
-        .concat(cryptoItems('D'))
+        .concat(tickerItems(''))
+        .concat(tickerItems('B'))
+        .concat(tickerItems('C'))
+        .concat(tickerItems('D'))
         .concat([
             {
                 type: 'select',
                 messageKey: 'KEY_CRYPTOTIME',
-                label: 'Crypto refresh (minutes)',
+                label: 'Refresh (minutes)',
                 defaultValue: 15,
                 options: [
                     { label: '5 min',  value: 5  },

@@ -29,7 +29,9 @@ void set_hours(struct tm* tick_time, char* hour_text, int hour_text_len) {
 }
 
 static void update_timezone(struct tm* tick_time, time_t* temp_gmt, int hour, int minute, char* code, char* text, int text_size) {
-    struct tm *gmt_time = gmtime(temp_gmt);
+    // gmtime() and localtime() share one static struct, so work on a copy.
+    struct tm gmt_copy = *gmtime(temp_gmt);
+    struct tm *gmt_time = &gmt_copy;
     gmt_time->tm_hour = gmt_time->tm_hour + hour;
     mktime(gmt_time);
     gmt_time->tm_min = gmt_time->tm_min + (hour >= 0 ? minute : -1*minute);
@@ -64,7 +66,8 @@ void update_time() {
     #if !defined PBL_PLATFORM_APLITE
     time_t temp_gmt_b = time(NULL);
     #endif
-    struct tm *tick_time = localtime(&temp);
+    struct tm local_copy = *localtime(&temp);
+    struct tm *tick_time = &local_copy;
 
     char tz_text[22];
     #if !defined PBL_PLATFORM_APLITE
@@ -113,14 +116,16 @@ void load_timezone_from_storage() {
 }
 
 void set_timezone(char *name, int hour, int minute) {
-   strcpy(tz_name, name);
+   strncpy(tz_name, name, sizeof(tz_name) - 1);
+   tz_name[sizeof(tz_name) - 1] = '\0';
    tz_hour = hour;
    tz_minute = minute;
 }
 
 #if !defined PBL_PLATFORM_APLITE
 void set_timezone_b(char *name, int hour, int minute) {
-   strcpy(tz_name_b, name);
+   strncpy(tz_name_b, name, sizeof(tz_name_b) - 1);
+   tz_name_b[sizeof(tz_name_b) - 1] = '\0';
    tz_hour_b = hour;
    tz_minute_b = minute;
 }

@@ -16,7 +16,7 @@ var messageKeys = require('message_keys');
 var STRING_KEYS = ['KEY_TIMEZONESCODE', 'KEY_TIMEZONESBCODE'];
 
 // Settings only used on the phone – never sent to the watch.
-var PHONE_ONLY_KEYS = /^KEY_CRYPTO(FROM|TO|MARKET|MULTI)/;
+var PHONE_ONLY_KEYS = /^KEY_(TICKER|CRYPTO(FROM|TO|MARKET|MULTI))/;
 
 function readSettings() {
     try {
@@ -88,14 +88,16 @@ function sendSettings(settings) {
     console.log('Sending settings: ' + JSON.stringify(dict));
     Pebble.sendAppMessage(dict, function() {
         console.log('Settings sent OK');
+        // Quotes are not fetched here: the watch requests them itself after
+        // applying settings, and only when a ticker module is shown.
         sendWeather();
-        getCryptocurrencies();
     }, function(e) {
         console.log('Settings send failed: ' + JSON.stringify(e));
     });
 }
 
 Pebble.addEventListener('showConfiguration', function() {
+    migrateTickerSettings();
     Pebble.openURL(clay.generateUrl());
 });
 
@@ -288,37 +290,196 @@ function sendWeather() {
 }
 
 // ---------------------------------------------------------------------------
-// Crypto prices via CryptoCompare
+// Stock, ETF, index, FX and crypto quotes via Yahoo Finance's chart endpoint,
+// with Coinbase spot prices as a fallback for crypto pairs such as BTC-USD.
 // ---------------------------------------------------------------------------
-var formatNumber = function(number) {
-    var numberStr = '' + number;
-    var maxLength = Math.min(numberStr.length, 7);
-    var dot = numberStr.indexOf('.');
-    if (dot !== -1) {
-        var beforeDot = Math.min(maxLength, dot);
-        var afterDot = Math.max(0, maxLength - beforeDot);
-        var num = numberStr.slice(dot - beforeDot, beforeDot + afterDot);
-        if (num[num.length - 1] === '.') {
-            return num.slice(0, num.length - 1);
-        }
-        return num;
-    }
-    return numberStr.slice(0, maxLength);
-};
+var TICKER_SUFFIXES = ['', 'B', 'C', 'D'];
+// The watch copies each quote into an 8-byte buffer.
+var MAX_QUOTE_LENGTH = 7;
+var QUOTE_TIMEOUT_MS = 10000;
+// Yahoo answers 429 to requests without a user agent and to bursts from one IP.
+var QUOTE_USER_AGENT = 'Mozilla/5.0';
+var YAHOO_HOSTS = ['query1.finance.yahoo.com', 'query2.finance.yahoo.com'];
+var STOCK_TYPES = ['EQUITY', 'ETF', 'INDEX', 'MUTUALFUND', 'FUTURE'];
 
-var xhrRequest = function(url, type, callback) {
+// Turns the old CryptoCompare from/to pairs into Yahoo symbols (BTC + USD -> BTC-USD).
+// Clay drops unknown keys on the next save, so this must run before the page opens.
+function migrateTickerSettings() {
+    var settings = readSettings();
+    var changed = false;
+    TICKER_SUFFIXES.forEach(function(suffix) {
+        var from = settings['KEY_CRYPTOFROM' + suffix];
+        var to = settings['KEY_CRYPTOTO' + suffix];
+        if (settings['KEY_TICKER' + suffix] === undefined && from !== undefined) {
+            var valid = from && to && from !== 'None' && to !== 'None';
+            settings['KEY_TICKER' + suffix] = valid ? (from + '-' + to).toUpperCase().replace(/\s/g, '') : '';
+            changed = true;
+        }
+        ['FROM', 'TO', 'MARKET', 'MULTI'].forEach(function(name) {
+            if (settings['KEY_CRYPTO' + name + suffix] !== undefined) {
+                delete settings['KEY_CRYPTO' + name + suffix];
+                changed = true;
+            }
+        });
+    });
+    if (changed) {
+        console.log('Migrated crypto settings to ticker symbols');
+        localStorage.setItem('clay-settings', JSON.stringify(settings));
+    }
+}
+
+// decimals < 0 uses as many as fit (max 4, or 5 below 1).
+// Values too wide for the watch are shortened with k/M/B.
+function formatPrice(value, decimals) {
+    if (typeof value !== 'number' || !isFinite(value)) {
+        return '?';
+    }
+    var sign = value < 0 ? '-' : '';
+    var abs = Math.abs(value);
+    if (abs > 0 && abs < 0.001 && decimals < 0) {
+        var digits = 2;
+        var exponential;
+        do {
+            exponential = sign + abs.toExponential(digits);
+            digits -= 1;
+        } while (exponential.length > MAX_QUOTE_LENGTH && digits >= 0);
+        return exponential;
+    }
+    var units = ['', 'k', 'M', 'B'];
+    for (var u = 0; u < units.length; u++) {
+        var room = MAX_QUOTE_LENGTH - sign.length - units[u].length;
+        var intLength = String(Math.round(abs)).length;
+        if (intLength <= room) {
+            var fit = Math.max(0, room - intLength - 1);
+            var auto = abs < 1 ? 5 : 4;
+            var text = abs.toFixed(Math.min(decimals < 0 ? auto : decimals, fit));
+            return sign + text + units[u];
+        }
+        abs /= 1000;
+    }
+    return '?';
+}
+
+function formatChange(percent, decimals) {
+    if (typeof percent !== 'number' || !isFinite(percent)) {
+        return '?';
+    }
+    var abs = Math.abs(percent);
+    var places = decimals >= 0 ? decimals : (abs >= 100 ? 0 : abs >= 10 ? 1 : 2);
+    var text;
+    do {
+        text = (percent < 0 ? '-' : '+') + abs.toFixed(places) + '%';
+        places -= 1;
+    } while (text.length > MAX_QUOTE_LENGTH && places >= 0);
+    return text.length > MAX_QUOTE_LENGTH ? '?' : text;
+}
+
+function formatQuote(quote, show, decimals) {
+    if (show === 1) {
+        return formatChange(quote.changePercent, decimals);
+    }
+    if (decimals < 0 && quote.stockLike && Math.abs(quote.price) >= 1) {
+        decimals = 2;
+    }
+    return formatPrice(quote.price, decimals);
+}
+
+function getJson(url, callback) {
+    var finished = false;
+    function finish(error, data) {
+        if (!finished) {
+            finished = true;
+            callback(error, data);
+        }
+    }
     var xhr = new XMLHttpRequest();
     xhr.onload = function() {
-        callback(this.responseText);
+        if (this.status !== 200) {
+            finish('HTTP ' + this.status);
+            return;
+        }
+        try {
+            finish(null, JSON.parse(this.responseText));
+        } catch (ex) {
+            finish('Invalid JSON');
+        }
     };
+    xhr.onerror = function() {
+        finish('Network error');
+    };
+    setTimeout(function() {
+        finish('Timeout');
+    }, QUOTE_TIMEOUT_MS);
     try {
-        xhr.open(type, url);
+        xhr.open('GET', url);
+        try {
+            xhr.setRequestHeader('User-Agent', QUOTE_USER_AGENT);
+        } catch (ignored) {
+            // Browser-based runtimes refuse to override the user agent.
+        }
         xhr.send();
     } catch (ex) {
-        console.log('XHR error: ' + ex);
-        sendError();
+        finish('XHR error: ' + ex);
     }
-};
+}
+
+function fetchYahooQuote(symbol, callback, hostIndex) {
+    hostIndex = hostIndex || 0;
+    var url = 'https://' + YAHOO_HOSTS[hostIndex] + '/v8/finance/chart/' +
+        encodeURIComponent(symbol) + '?range=1d&interval=1d';
+    getJson(url, function(error, data) {
+        var meta = !error && data && data.chart && data.chart.result && data.chart.result[0] &&
+            data.chart.result[0].meta;
+        if (!meta || typeof meta.regularMarketPrice !== 'number') {
+            if (error && hostIndex + 1 < YAHOO_HOSTS.length) {
+                fetchYahooQuote(symbol, callback, hostIndex + 1);
+            } else {
+                callback(error || 'No data');
+            }
+            return;
+        }
+        var price = meta.regularMarketPrice;
+        var previous = meta.chartPreviousClose || meta.previousClose;
+        var change = typeof meta.regularMarketChangePercent === 'number' ? meta.regularMarketChangePercent :
+            previous ? (price - previous) / previous * 100 : null;
+        callback(null, {
+            price: price,
+            changePercent: change,
+            stockLike: STOCK_TYPES.indexOf(meta.instrumentType) !== -1
+        });
+    });
+}
+
+function fetchCoinbaseQuote(symbol, callback) {
+    getJson('https://api.coinbase.com/v2/prices/' + encodeURIComponent(symbol) + '/spot', function(error, data) {
+        var price = !error && data && data.data ? parseFloat(data.data.amount) : NaN;
+        if (isNaN(price)) {
+            callback(error || 'No data');
+            return;
+        }
+        callback(null, { price: price, changePercent: null, stockLike: false });
+    });
+}
+
+function fetchQuote(symbol, callback) {
+    fetchYahooQuote(symbol, function(error, quote) {
+        if (!error) {
+            callback(null, quote);
+            return;
+        }
+        console.log('Yahoo quote failed for ' + symbol + ': ' + error);
+        if (!/^[A-Z0-9]+-[A-Z]{3,4}$/.test(symbol)) {
+            callback(error);
+            return;
+        }
+        fetchCoinbaseQuote(symbol, function(fallbackError, fallbackQuote) {
+            if (fallbackError) {
+                console.log('Coinbase quote failed for ' + symbol + ': ' + fallbackError);
+            }
+            callback(fallbackError, fallbackQuote);
+        });
+    });
+}
 
 var sendError = function() {
     Pebble.sendAppMessage(
@@ -328,93 +489,72 @@ var sendError = function() {
     );
 };
 
-var getCryptocurrencies = function() {
-    try {
-        var settings = readSettings();
+var quotesInFlight = false;
 
-        function cs(key) {
-            return settings[key] || '';
-        }
-
-        var pairs = ['', 'B', 'C', 'D'].map(function(suffix) {
-            return {
-                priceKey: 'KEY_CRYPTOPRICE' + suffix,
-                from:   cs('KEY_CRYPTOFROM' + suffix),
-                to:     cs('KEY_CRYPTOTO' + suffix),
-                market: cs('KEY_CRYPTOMARKET' + suffix),
-                multi:  !!cs('KEY_CRYPTOMULTI' + suffix)
-            };
-        });
-
-        var pending = {};
-        var results = {};
-
-        pairs.forEach(function(pair) {
-            if (pair.from && pair.from !== 'None' &&
-                pair.to   && pair.to   !== 'None' &&
-                pair.market && pair.market !== 'None') {
-                pending[pair.priceKey] = pair;
-                results[pair.priceKey] = null;
-            }
-        });
-
-        if (Object.keys(pending).length === 0) {
-            console.log('No crypto pairs configured');
-            return;
-        }
-
-        console.log('Fetching crypto: ' + JSON.stringify(Object.keys(pending)));
-
-        var retries = 0;
-        var interval = setInterval(function() {
-            var allDone = Object.keys(results).every(function(k) {
-                return results[k] !== null;
-            });
-
-            if (allDone) {
-                clearInterval(interval);
-                Pebble.sendAppMessage(
-                    results,
-                    function() { console.log('Crypto sent OK'); },
-                    function() { console.log('Crypto send failed'); }
-                );
-            } else if (retries > 20) {
-                clearInterval(interval);
-                console.log('Crypto timeout');
-                sendError();
-            } else {
-                retries += 1;
-            }
-        }, 200);
-
-        Object.keys(pending).forEach(function(key) {
-            var p = pending[key];
-            var url = 'https://min-api.cryptocompare.com/data/price?fsym=' +
-                p.from + '&tsyms=' + p.to + '&e=' + p.market;
-            xhrRequest(url, 'GET', function(responseText) {
-                try {
-                    var resp = JSON.parse(responseText);
-                    results[key] = formatNumber(
-                        p.multi
-                            ? Math.round(parseFloat(resp[p.to]) * 100000000)
-                            : resp[p.to]
-                    );
-                } catch (ex) {
-                    console.log('Crypto parse error for ' + key + ': ' + ex);
-                    results[key] = '?';
-                }
-            });
-        });
-    } catch (ex) {
-        console.log('getCryptocurrencies error: ' + ex);
+function getQuotes() {
+    if (quotesInFlight) {
+        console.log('Quote fetch already in progress');
+        return;
     }
-};
+    var settings = readSettings();
+    var tickers = [];
+    TICKER_SUFFIXES.forEach(function(suffix) {
+        var symbol = String(settings['KEY_TICKER' + suffix] || '').trim().toUpperCase();
+        if (symbol) {
+            var decimals = parseInt(settings['KEY_TICKERDECIMALS' + suffix], 10);
+            tickers.push({
+                priceKey: 'KEY_CRYPTOPRICE' + suffix,
+                symbol: symbol,
+                show: parseInt(settings['KEY_TICKERSHOW' + suffix], 10) || 0,
+                decimals: isNaN(decimals) ? -1 : decimals
+            });
+        }
+    });
+
+    if (tickers.length === 0) {
+        console.log('No ticker symbols configured');
+        return;
+    }
+
+    console.log('Fetching quotes: ' + tickers.map(function(t) { return t.symbol; }).join(', '));
+
+    var results = {};
+    var pending = tickers.length;
+    var failures = 0;
+    quotesInFlight = true;
+    tickers.forEach(function(ticker) {
+        fetchQuote(ticker.symbol, function(error, quote) {
+            if (error) {
+                failures += 1;
+                results[ticker.priceKey] = '?';
+            } else {
+                results[ticker.priceKey] = formatQuote(quote, ticker.show, ticker.decimals);
+            }
+            pending -= 1;
+            if (pending > 0) {
+                return;
+            }
+            quotesInFlight = false;
+            if (failures === tickers.length) {
+                sendError();
+                return;
+            }
+            console.log('Sending quotes: ' + JSON.stringify(results));
+            Pebble.sendAppMessage(
+                results,
+                function() { console.log('Quotes sent OK'); },
+                function() { console.log('Quotes send failed'); }
+            );
+        });
+    });
+}
 
 // ---------------------------------------------------------------------------
 // Pebble event listeners
 // ---------------------------------------------------------------------------
 Pebble.addEventListener('ready', function() {
     console.log('Timeboxed 2 PKJS ready');
+    migrateTickerSettings();
     if (!localStorage.getItem('clay-settings')) {
         var defaults = defaultSettings(clayConfig);
         clay.setSettings(defaults);
@@ -429,7 +569,7 @@ Pebble.addEventListener('appmessage', function(e) {
         // Re-send latest cached data; plugin subscription handles live updates
         sendWeather();
     } else if (e.payload.KEY_REQUESTCRYPTO) {
-        console.log('Watch requested crypto refresh');
-        getCryptocurrencies();
+        console.log('Watch requested quote refresh');
+        getQuotes();
     }
 });
